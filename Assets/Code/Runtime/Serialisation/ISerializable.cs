@@ -1,4 +1,4 @@
-namespace CodingTest_TF.Serialization
+namespace CodingTest_TF.Runtime.Serialization
 {
     public interface ISerializable<T> where T : AbstractMemento
     {

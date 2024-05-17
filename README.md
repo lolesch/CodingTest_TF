@@ -22,7 +22,7 @@
 > 		- [x] Each button should have a different tooltip text. 
 > 	- [ ] When the user clicks on a button a closable popup should appear. 
 > 		- [x] The popup has a text in it that is different for each button. 
-> 	- [ ] The user should be able to drag each button around the screen which will move it accordingly. 
+> 	- [x] The user should be able to drag each button around the screen which will move it accordingly. 
 > 	- [x] When the user right clicks a button it should cycle its color. 
 > 		- [x] If you right click a red button it should turn green
 > 		- [x] if you right click a green button it should turn blue 
