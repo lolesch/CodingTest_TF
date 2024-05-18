@@ -1,6 +1,7 @@
 ﻿using CodingTest_TF.Data;
 using CodingTest_TF.Data.Enums;
 using CodingTest_TF.Runtime.CommandPattern;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,15 +10,17 @@ namespace CodingTest_TF.UI.Buttons
 {
     public sealed class CommandButton : AbstractButton
     {
-        // TODO: serialize initial values
-        // TODO: dragging is another component => IDragHandler
-
         private OpenPopupCommand openPopupCommand;
         private ShowTooltipCommand showTooltipCommand;
         private CycleColorCommand cycleColorCommand;
         private ApplyColorCommand applyColorCommand;
 
         private Coroutine showTooltip;
+
+        public static event Action<string> OnShowPopup;
+
+        public static event Action<string> OnShowTooltip;
+        public static event Action OnHideTooltip;
 
         [Header("Initial Values")]
         [SerializeField] private string popupText = $"Set the popup text in the inspector";
@@ -55,6 +58,8 @@ namespace CodingTest_TF.UI.Buttons
             if (showTooltip != null)
                 StopCoroutine(showTooltip);
 
+            OnHideTooltip?.Invoke();
+
             //showTooltipCommand.UnExecute();
         }
 
@@ -62,7 +67,9 @@ namespace CodingTest_TF.UI.Buttons
         {
             yield return new WaitForSeconds(Constants.TooltipDelay);
 
-            showTooltipCommand.Execute();
+            OnShowTooltip?.Invoke(tooltipText);
+
+            //showTooltipCommand.Execute();
         }
     }
 }

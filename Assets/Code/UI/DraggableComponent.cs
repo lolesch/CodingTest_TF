@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace CodingTest_TF.UI.Buttons
+namespace CodingTest_TF.UI
 {
     [RequireComponent(typeof(RectTransform))]
     public sealed class DraggableComponent : MonoBehaviour, IDragHandler
@@ -20,6 +20,20 @@ namespace CodingTest_TF.UI.Buttons
         }
         private RectTransform m_rectTransform;
 
-        public void OnDrag(PointerEventData eventData) => RectTransform.anchoredPosition += eventData.delta / RectTransform.lossyScale;
+        public void OnDrag(PointerEventData eventData)
+        {
+            RectTransform.anchoredPosition += eventData.delta / RectTransform.lossyScale;
+            RectTransform.anchoredPosition = ClampToParentRect();
+        }
+
+        private Vector2 ClampToParentRect()
+        {
+            var anchoredPosition = RectTransform.anchoredPosition;
+
+            anchoredPosition.x = Mathf.Clamp(anchoredPosition.x, 0f, (RectTransform.parent as RectTransform).rect.width - RectTransform.rect.width);
+            anchoredPosition.y = Mathf.Clamp(anchoredPosition.y, 0f, (RectTransform.parent as RectTransform).rect.height - RectTransform.rect.height);
+
+            return anchoredPosition;
+        }
     }
 }

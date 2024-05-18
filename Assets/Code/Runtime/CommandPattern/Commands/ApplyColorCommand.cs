@@ -1,5 +1,6 @@
 ﻿using CodingTest_TF.Data.Enums;
 using CodingTest_TF.UI.Buttons;
+using CodingTest_TF.Utility.Extensions;
 using System;
 using UnityEngine;
 
@@ -19,7 +20,8 @@ namespace CodingTest_TF.Runtime.CommandPattern
         {
             ButtonTint.Red => Color.red,
             ButtonTint.Green => Color.green,
-            ButtonTint.Blue => Color.blue,
+            //ButtonTint.Blue => Color.blue,
+            ButtonTint.Blue => ColorExtensions.LightBlue,
 
             _ => receiver.targetGraphic.color
         };

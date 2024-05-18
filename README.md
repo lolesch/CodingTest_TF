@@ -9,7 +9,7 @@
 - extendibility
 
 > [!bug] Urgent!
-> - [ ] use the tooltip positioning from the InventorySystem item comparison
+> - [ ] import fading panels for tooltip and popup
 
 > [!example] 1 - BUTTON ACTIONS
 > - [ ] Create three buttons in the main view of the application. 
@@ -18,7 +18,7 @@
 > ___
 > - [ ] Each button can be interacted with in the following ways: 
 > 	- [ ] When the user hovers over a button for more than 0.5 seconds a tooltip should appear over the button. 
-> 		- [ ] make the tooltip appear based on the current position
+> 		- [x] make the tooltip appear based on the current position
 > 		- [x] Each button should have a different tooltip text. 
 > 	- [ ] When the user clicks on a button a closable popup should appear. 
 > 		- [x] The popup has a text in it that is different for each button. 
