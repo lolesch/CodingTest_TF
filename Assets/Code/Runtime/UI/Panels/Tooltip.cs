@@ -9,7 +9,9 @@ namespace CodingTest_TF.Runtime.UI.Panels
     {
         private TextMeshProUGUI tooltip;
         private bool showLeft;
-        private float OffsetX => showLeft ? +10 : -10;
+
+        [SerializeField, Range(0, 100)] private float horOffset = 10;
+        private float OffsetX => showLeft ? +horOffset : -horOffset;
 
         protected override void OnDisable()
         {

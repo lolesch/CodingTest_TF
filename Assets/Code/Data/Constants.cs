@@ -6,7 +6,7 @@ namespace CodingTest_TF.Data
     {
         public static readonly string SaveDirectory = Application.persistentDataPath;
 
-        public static readonly string SaveGameName = "SaveGame";
+        //public static readonly string SaveGameName = "SaveGame";
 
         public static readonly string FileEnding = "sav";
 
