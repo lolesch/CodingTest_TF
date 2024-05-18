@@ -12,7 +12,7 @@ namespace CodingTest_TF.Runtime.UI.Buttons
 
         public virtual void OnPointerClick(PointerEventData eventData)
         {
-            if (!interactable)
+            if (!interactable || eventData.dragging)
                 return;
 
             if (eventData.button == PointerEventData.InputButton.Left)

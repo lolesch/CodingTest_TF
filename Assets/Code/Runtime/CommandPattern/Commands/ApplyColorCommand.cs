@@ -18,10 +18,9 @@ namespace CodingTest_TF.Runtime.CommandPattern
 
         private void ApplyColor(ButtonTint tint) => receiver.targetGraphic.color = tint switch
         {
-            ButtonTint.Red => Color.red,
-            ButtonTint.Green => Color.green,
-            //ButtonTint.Blue => Color.blue,
-            ButtonTint.Blue => ColorExtensions.LightBlue,
+            ButtonTint.Red => ColorExtensions.ButtonRed,
+            ButtonTint.Green => ColorExtensions.ButtonGreen,
+            ButtonTint.Blue => ColorExtensions.ButtonBlue,
 
             _ => receiver.targetGraphic.color
         };

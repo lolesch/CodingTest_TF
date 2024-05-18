@@ -11,7 +11,7 @@ namespace CodingTest_TF.Runtime.UI.Panels
     /// A panel should always stay enabled, only its canvasGroup alpha is set to 0.
     /// Therefore use <see cref="BeforeAppear"/> instead of <see cref="OnEnable()"/> to refresh panel data.
     /// </summary>
-    [RequireComponent(typeof(CanvasGroup), typeof(GraphicRaycaster))]
+    [RequireComponent(typeof(CanvasGroup), typeof(GraphicRaycaster), typeof(RectTransform))]
     public abstract class AbstractPanel : MonoBehaviour
     {
         #region COMPONENT REFERENCES

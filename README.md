@@ -11,16 +11,16 @@
 > [!bug] Urgent!
 > - [ ] import fading panels for tooltip and popup
 
-> [!example] 1 - BUTTON ACTIONS
-> - [ ] Create three buttons in the main view of the application. 
-> 	- [ ] The buttons should all have different graphics of your choosing. 
+> [!example]- 1 - BUTTON ACTIONS
+> - [x] Create three buttons in the main view of the application. 
+> 	- [x] The buttons should all have different graphics of your choosing. 
 > 	- [x] Their initial position does not matter too much since they will move around. 
 > ___
-> - [ ] Each button can be interacted with in the following ways: 
-> 	- [ ] When the user hovers over a button for more than 0.5 seconds a tooltip should appear over the button. 
+> - [x] Each button can be interacted with in the following ways: 
+> 	- [x] When the user hovers over a button for more than 0.5 seconds a tooltip should appear over the button. 
 > 		- [x] make the tooltip appear based on the current position
 > 		- [x] Each button should have a different tooltip text. 
-> 	- [ ] When the user clicks on a button a closable popup should appear. 
+> 	- [x] When the user clicks on a button a closable popup should appear. 
 > 		- [x] The popup has a text in it that is different for each button. 
 > 	- [x] The user should be able to drag each button around the screen which will move it accordingly. 
 > 	- [x] When the user right clicks a button it should cycle its color. 

@@ -17,7 +17,6 @@ namespace CodingTest_TF.Runtime.UI.Buttons
 
         private Coroutine showTooltip;
 
-        public static event Action<string> OnShowPopup;
 
         public static event Action<string> OnShowTooltip;
         public static event Action OnHideTooltip;

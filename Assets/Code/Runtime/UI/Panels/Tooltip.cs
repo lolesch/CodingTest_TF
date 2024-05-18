@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace CodingTest_TF.Runtime.UI.Panels
 {
-    [RequireComponent(typeof(RectTransform))]
     public sealed class Tooltip : AbstractPanel
     {
         private TextMeshProUGUI tooltip;
@@ -42,7 +41,6 @@ namespace CodingTest_TF.Runtime.UI.Panels
         {
             tooltip.text = text;
 
-            /// pivot pointing towards center of screen
             showLeft = Input.mousePosition.x < (Screen.width * 0.5);
 
             SetPosition();
@@ -52,6 +50,7 @@ namespace CodingTest_TF.Runtime.UI.Panels
 
         private void SetPosition()
         {
+            /// pivot pointing towards center of screen
             var pivotX = showLeft ? 0 : 1;
             var pivotY = Input.mousePosition.y.MapTo01(0, Screen.height);
             Transform.pivot = new(pivotX, pivotY);
