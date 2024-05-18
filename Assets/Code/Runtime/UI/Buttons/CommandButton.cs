@@ -6,9 +6,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace CodingTest_TF.UI.Buttons
+namespace CodingTest_TF.Runtime.UI.Buttons
 {
-    public sealed class CommandButton : AbstractButton
+    public sealed class CommandButton : AbstractButton, IBeginDragHandler, IEndDragHandler
     {
         private OpenPopupCommand openPopupCommand;
         private ShowTooltipCommand showTooltipCommand;
@@ -38,38 +38,58 @@ namespace CodingTest_TF.UI.Buttons
             applyColorCommand.Execute();
         }
 
-        protected override void OnLeftClick() => openPopupCommand.Execute();
+        protected override void OnLeftClick()
+        {
+            HideTooltip();
+
+            openPopupCommand.Execute();
+
+            showTooltip = StartCoroutine(ShowTooltip(Constants.TooltipDelayAfterInteraction));
+        }
+
         protected override void OnRightClick()
         {
+            HideTooltip();
+
             cycleColorCommand.Execute();
             applyColorCommand.Execute();
+
+            showTooltip = StartCoroutine(ShowTooltip(Constants.TooltipDelayAfterInteraction));
         }
         public override void OnPointerEnter(PointerEventData eventData)
         {
             base.OnPointerEnter(eventData);
 
-            showTooltip = StartCoroutine(ShowTooltip());
+            showTooltip = StartCoroutine(ShowTooltip(Constants.TooltipDelay));
         }
 
         public override void OnPointerExit(PointerEventData eventData)
         {
             base.OnPointerExit(eventData);
 
-            if (showTooltip != null)
-                StopCoroutine(showTooltip);
-
-            OnHideTooltip?.Invoke();
+            HideTooltip();
 
             //showTooltipCommand.UnExecute();
         }
 
-        private IEnumerator ShowTooltip()
+        private void HideTooltip()
         {
-            yield return new WaitForSeconds(Constants.TooltipDelay);
+            if (showTooltip != null)
+                StopCoroutine(showTooltip);
+
+            OnHideTooltip?.Invoke();
+        }
+
+        private IEnumerator ShowTooltip(float delay)
+        {
+            yield return new WaitForSeconds(delay);
 
             OnShowTooltip?.Invoke(tooltipText);
 
             //showTooltipCommand.Execute();
         }
+
+        public void OnBeginDrag(PointerEventData eventData) => HideTooltip();
+        public void OnEndDrag(PointerEventData eventData) => showTooltip = StartCoroutine(ShowTooltip(Constants.TooltipDelayAfterInteraction));
     }
 }

@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace CodingTest_TF.UI
+namespace CodingTest_TF.Runtime.UI
 {
     [RequireComponent(typeof(RectTransform))]
-    public sealed class DraggableComponent : MonoBehaviour, IDragHandler
+    public sealed class Draggable : MonoBehaviour, IDragHandler
     {
         /// <summary>
         /// A cached reference to the RectTransform

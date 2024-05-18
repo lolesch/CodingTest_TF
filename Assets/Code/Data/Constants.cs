@@ -11,5 +11,6 @@ namespace CodingTest_TF.Data
         public static readonly string FileEnding = "sav";
 
         public static readonly float TooltipDelay = .5f;
+        public static readonly float TooltipDelayAfterInteraction = 2f;
     }
 }

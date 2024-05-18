@@ -1,34 +1,21 @@
-using CodingTest_TF.UI.Buttons;
+using CodingTest_TF.Runtime.UI.Buttons;
 using CodingTest_TF.Utility.Extensions;
 using TMPro;
 using UnityEngine;
 
-namespace CodingTest_TF.UI
+namespace CodingTest_TF.Runtime.UI.Panels
 {
     [RequireComponent(typeof(RectTransform))]
-    public sealed class Tooltip : MonoBehaviour
+    public sealed class Tooltip : AbstractPanel
     {
-        /// <summary>
-        /// A cached reference to the RectTransform
-        /// </summary>
-        public RectTransform RectTransform
-        {
-            get
-            {
-                if (m_rectTransform == null)
-                    m_rectTransform = GetComponent<RectTransform>();
-                return m_rectTransform;
-            }
-        }
-        private RectTransform m_rectTransform;
-
         private TextMeshProUGUI tooltip;
-        private bool isShowing;
         private bool showLeft;
         private float OffsetX => showLeft ? +10 : -10;
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
+
             CommandButton.OnShowTooltip -= ShowTooltip;
             CommandButton.OnHideTooltip -= HideTooltip;
         }
@@ -44,31 +31,33 @@ namespace CodingTest_TF.UI
 
         private void Start() => tooltip = GetComponentInChildren<TextMeshProUGUI>();
 
-        private void Update()
+        private void LateUpdate()
         {
-            if (isShowing)
+            if (IsActive)
                 SetPosition();
         }
 
-        private void HideTooltip() => isShowing = false;
+        private void HideTooltip() => FadeOut();
         private void ShowTooltip(string text)
         {
             tooltip.text = text;
 
-            isShowing = true;
+            /// pivot pointing towards center of screen
+            showLeft = Input.mousePosition.x < (Screen.width * 0.5);
+
+            SetPosition();
+
+            FadeIn();
         }
 
         private void SetPosition()
         {
-            /// pivot pointing towards center of screen
-            showLeft = Input.mousePosition.x < (Screen.width * 0.5);
-
             var pivotX = showLeft ? 0 : 1;
             var pivotY = Input.mousePosition.y.MapTo01(0, Screen.height);
-            RectTransform.pivot = new(pivotX, pivotY);
+            Transform.pivot = new(pivotX, pivotY);
 
-            var mousePos = (Vector2)Input.mousePosition / RectTransform.lossyScale;
-            RectTransform.anchoredPosition = new Vector2(mousePos.x + OffsetX, mousePos.y);
+            var mousePos = (Vector2)Input.mousePosition / Transform.lossyScale;
+            Transform.anchoredPosition = new Vector2(mousePos.x + OffsetX, mousePos.y);
         }
     }
 }

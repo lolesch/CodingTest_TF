@@ -2031,6 +2031,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1412162787145905741, guid: 334ac54a838900144bdb9d16fce27c52, type: 3}
+      propertyPath: m_SortingOrder
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1412162787145905741, guid: 334ac54a838900144bdb9d16fce27c52, type: 3}
+      propertyPath: m_OverrideSorting
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1412162787145905741, guid: 334ac54a838900144bdb9d16fce27c52, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 3391884536087999978, guid: 334ac54a838900144bdb9d16fce27c52, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
