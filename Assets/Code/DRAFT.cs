@@ -34,3 +34,6 @@
 /* how to save the individual commands
  */
 
+/* press recording executes a startRecordingCommand
+ * should save the current state
+ */

@@ -1,9 +1,9 @@
-using CodingTest_TF.Runtime.UI.Buttons;
-using CodingTest_TF.Utility.Extensions;
+using CodingTest.Runtime.UI.Buttons;
+using CodingTest.Utility.Extensions;
 using TMPro;
 using UnityEngine;
 
-namespace CodingTest_TF.Runtime.UI.Panels
+namespace CodingTest.Runtime.UI.Panels
 {
     public sealed class Tooltip : AbstractPanel
     {

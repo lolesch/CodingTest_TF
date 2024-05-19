@@ -1,12 +1,12 @@
-﻿using CodingTest_TF.Data;
-using CodingTest_TF.Data.Enums;
-using CodingTest_TF.Runtime.CommandPattern;
+﻿using CodingTest.Data;
+using CodingTest.Data.Enums;
+using CodingTest.Runtime.CommandPattern;
 using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace CodingTest_TF.Runtime.UI.Buttons
+namespace CodingTest.Runtime.UI.Buttons
 {
     public sealed class CommandButton : AbstractButton, IBeginDragHandler, IEndDragHandler
     {

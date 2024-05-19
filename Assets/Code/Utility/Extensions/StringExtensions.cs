@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Reflection;
 using UnityEngine;
 
-namespace CodingTest_TF.Utility.Extensions
+namespace CodingTest.Utility.Extensions
 {
     public static class StringExtensions
     {

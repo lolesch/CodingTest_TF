@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CodingTest_TF.Runtime.CommandPattern
+namespace CodingTest.Runtime.CommandPattern
 {
     public sealed class StartRecordingCommand : ICommand
     {

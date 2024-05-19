@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 
 #if UNITY_EDITOR
-namespace CodingTest_TF.Utility.AttributeRefs
+namespace CodingTest.Utility.AttributeRefs
 {
     [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
     public sealed class ReadOnlyDrawer : PropertyDrawer

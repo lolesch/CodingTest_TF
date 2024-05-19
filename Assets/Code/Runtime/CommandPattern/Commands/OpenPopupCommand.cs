@@ -1,7 +1,7 @@
-﻿using CodingTest_TF.Data.Recordings;
+﻿using CodingTest.Data.ReplaySystem;
 using System;
 
-namespace CodingTest_TF.Runtime.CommandPattern
+namespace CodingTest.Runtime.CommandPattern
 {
     public sealed class OpenPopupCommand : ICommand
     {
@@ -14,7 +14,7 @@ namespace CodingTest_TF.Runtime.CommandPattern
         {
             OnShowPopup?.Invoke(popupText);
 
-            ActionRecording.AddEntry(this);
+            Recording.AddEntry(this);
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using CodingTest_TF.Utility.AttributeRefs;
+﻿using CodingTest.Utility.AttributeRefs;
 using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CodingTest_TF.Runtime.UI.Panels
+namespace CodingTest.Runtime.UI.Panels
 {
     /// <summary>
     /// Panels provide appearence options such as fading in and out, scaling and movement.

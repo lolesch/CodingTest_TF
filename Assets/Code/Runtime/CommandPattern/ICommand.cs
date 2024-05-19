@@ -1,4 +1,4 @@
-namespace CodingTest_TF.Runtime.CommandPattern
+namespace CodingTest.Runtime.CommandPattern
 {
     public interface ICommand
     {

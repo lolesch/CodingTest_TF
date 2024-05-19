@@ -1,10 +1,10 @@
-﻿using CodingTest_TF.Data.Enums;
-using CodingTest_TF.Data.Recordings;
-using CodingTest_TF.Runtime.UI.Buttons;
-using CodingTest_TF.Utility.Extensions;
+﻿using CodingTest.Data.Enums;
+using CodingTest.Data.ReplaySystem;
+using CodingTest.Runtime.UI.Buttons;
+using CodingTest.Utility.Extensions;
 using UnityEngine;
 
-namespace CodingTest_TF.Runtime.CommandPattern
+namespace CodingTest.Runtime.CommandPattern
 {
     public sealed class ApplyColorCommand : ICommand
     {
@@ -16,7 +16,7 @@ namespace CodingTest_TF.Runtime.CommandPattern
         {
             ApplyColor(receiver.CurrentTint);
 
-            ActionRecording.AddEntry(this);
+            Recording.AddEntry(this);
         }
 
         private void ApplyColor(ButtonTint tint) => receiver.targetGraphic.color = tint switch

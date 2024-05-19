@@ -1,9 +1,9 @@
-﻿using CodingTest_TF.Data;
+﻿using CodingTest.Data;
 using System;
 using System.IO;
 using UnityEngine;
 
-namespace CodingTest_TF.Runtime.Provider
+namespace CodingTest.Runtime.Provider
 {
     public sealed class SerialisationProvider : AbstractProvider<SerialisationProvider>
     {

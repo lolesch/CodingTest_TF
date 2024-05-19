@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 #if UNITY_EDITOR
-namespace CodingTest_TF.Utility.AttributeRefs
+namespace CodingTest.Utility.AttributeRefs
 {
     [CustomPropertyDrawer(typeof(SceneRefAttribute))]
     public sealed class SceneRefDrawer : PropertyDrawer

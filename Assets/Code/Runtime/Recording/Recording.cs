@@ -1,6 +1,6 @@
-using CodingTest_TF.Runtime.CommandPattern;
-using CodingTest_TF.Runtime.Provider;
-using CodingTest_TF.Runtime.Serialization;
+using CodingTest.Runtime.CommandPattern;
+using CodingTest.Runtime.Provider;
+using CodingTest.Runtime.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,10 +9,12 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using UnityEngine;
 
-namespace CodingTest_TF.Data.Recordings
+namespace CodingTest.Data.ReplaySystem
 {
-    public sealed class ActionRecording : MonoBehaviour
+    public sealed class Recording : MonoBehaviour
     {
+        public Recording(string fileName) => this.fileName = fileName;
+
         // TODO: listen for inputField onEndEdit to set fileName
         [field: SerializeField] private string fileName = string.Empty;
         [field: SerializeField] private static float startedRecordingTime = 0;
@@ -21,21 +23,13 @@ namespace CodingTest_TF.Data.Recordings
         [field: SerializeField] private static readonly List<RecordingEntry> entries = new();
         [field: SerializeField] private GameState CurrentState { get; set; }
 
-        private void OnDisable()
-        {
-            StartRecordingCommand.OnStartRecording -= StartRecording;
-            SetFileNameCommand.OnSetFileName -= SetFileName;
-        }
+        private void OnDisable() => StartRecordingCommand.OnStartRecording -= StartRecording;
 
         private void OnEnable()
         {
             StartRecordingCommand.OnStartRecording -= StartRecording;
             StartRecordingCommand.OnStartRecording += StartRecording;
-            SetFileNameCommand.OnSetFileName -= SetFileName;
-            SetFileNameCommand.OnSetFileName += SetFileName;
         }
-
-        private void SetFileName(string fileName) => this.fileName = fileName;
 
         public static void AddEntry(ICommand command) =>
             entries.Add(new RecordingEntry(Time.time - startedRecordingTime, command));

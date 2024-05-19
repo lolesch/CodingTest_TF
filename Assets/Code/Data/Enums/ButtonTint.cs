@@ -1,4 +1,4 @@
-﻿namespace CodingTest_TF.Data.Enums
+﻿namespace CodingTest.Data.Enums
 {
     public enum ButtonTint
     {

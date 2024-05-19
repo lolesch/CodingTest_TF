@@ -1,7 +1,7 @@
-﻿using CodingTest_TF.Runtime.CommandPattern;
+﻿using CodingTest.Runtime.CommandPattern;
 using TMPro;
 
-namespace CodingTest_TF.Runtime.UI.Panels
+namespace CodingTest.Runtime.UI.Panels
 {
     public sealed class Popup : AbstractPanel
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CodingTest_TF.Data
+namespace CodingTest.Data
 {
     public static class Constants
     {

@@ -1,9 +1,9 @@
-﻿using CodingTest_TF.Utility.Extensions;
+﻿using CodingTest.Utility.Extensions;
 using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace CodingTest_TF.Runtime.Provider
+namespace CodingTest.Runtime.Provider
 {
     public abstract class AbstractProvider<T> : MonoBehaviour where T : MonoBehaviour
     {

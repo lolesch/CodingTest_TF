@@ -1,7 +1,7 @@
 ﻿using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace CodingTest_TF.Runtime.UI.Buttons
+namespace CodingTest.Runtime.UI.Buttons
 {
     public abstract class AbstractButton : Selectable, IPointerClickHandler
     {

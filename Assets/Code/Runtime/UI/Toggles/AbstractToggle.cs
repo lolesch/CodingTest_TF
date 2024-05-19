@@ -1,4 +1,4 @@
-﻿using CodingTest_TF.Utility.AttributeRefs;
+﻿using CodingTest.Utility.AttributeRefs;
 using DG.Tweening;
 using System;
 using TMPro;
@@ -6,19 +6,24 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace CodingTest_TF.Runtime.UI.Toggles
+namespace CodingTest.Runtime.UI.Toggles
 {
     public abstract class AbstractToggle : Selectable, IPointerClickHandler
     {
         [field: SerializeField] public bool IsOn { get; private set; } = false;
 
         [SerializeField, ReadOnly] protected RadioGroup radioGroup = null;
-        public RadioGroup RadioGroup => radioGroup != null ? radioGroup : radioGroup = GetComponentInParent<RadioGroup>();
+        public RadioGroup RadioGroup => radioGroup == null ? radioGroup = GetComponentInParent<RadioGroup>() : radioGroup;
 
-        [SerializeField] private Sprite toggledOffSprite;
-        [SerializeField] private Sprite toggledOnSprite;
+        [SerializeField, ReadOnly] protected TextMeshProUGUI displayText = null;
+        public TextMeshProUGUI DisplayText => displayText == null ? displayText = GetComponentInChildren<TextMeshProUGUI>() : displayText;
         [SerializeField] private string toggledOffText;
         [SerializeField] private string toggledOnText;
+
+        [SerializeField, ReadOnly] protected Image icon = null;
+        public Image Icon => icon == null ? icon = GetComponentsInChildren<Image>()[1] : icon;
+        [SerializeField] private Sprite toggledOffSprite;
+        [SerializeField] private Sprite toggledOnSprite;
 
         public event Action<bool> OnToggle;
 
@@ -64,15 +69,16 @@ namespace CodingTest_TF.Runtime.UI.Toggles
             IsOn = isOn;
             OnToggle?.Invoke(IsOn);
 
-            if (targetGraphic is Image image)
+            if (Icon != null)
             {
                 if (toggledOffSprite != null && toggledOnSprite != null)
-                    image.sprite = IsOn ? toggledOnSprite : toggledOffSprite;
+                    Icon.sprite = IsOn ? toggledOnSprite : toggledOffSprite;
             }
-            else if (targetGraphic is TextMeshProUGUI tmp)
+
+            if (DisplayText != null)
             {
                 if (toggledOffText != string.Empty && toggledOnText != string.Empty)
-                    tmp.text = IsOn ? toggledOnText : toggledOffText;
+                    DisplayText.text = IsOn ? toggledOnText : toggledOffText;
             }
 
             if (IsOn && RadioGroup)

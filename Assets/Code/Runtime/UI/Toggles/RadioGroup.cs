@@ -1,9 +1,9 @@
-﻿using CodingTest_TF.Utility.AttributeRefs;
+﻿using CodingTest.Utility.AttributeRefs;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CodingTest_TF.Runtime.UI.Toggles
+namespace CodingTest.Runtime.UI.Toggles
 {
     public class RadioGroup : MonoBehaviour
     {

@@ -1,8 +1,9 @@
-﻿using CodingTest_TF.Runtime.CommandPattern;
-using CodingTest_TF.Utility.Extensions;
+﻿using CodingTest.Runtime.CommandPattern;
+using CodingTest.Runtime.Provider;
+using CodingTest.Utility.Extensions;
 using UnityEngine;
 
-namespace CodingTest_TF.Runtime.UI.Toggles
+namespace CodingTest.Runtime.UI.Toggles
 {
     public sealed class StartStopRecordingToggle : AbstractToggle
     {
@@ -19,5 +20,7 @@ namespace CodingTest_TF.Runtime.UI.Toggles
         }
 
         // TODO: tooltip for required fileName
+
+        private void FixedUpdate() => interactable = ReplayProvider.Instance.RecordingName != string.Empty;
     }
 }
