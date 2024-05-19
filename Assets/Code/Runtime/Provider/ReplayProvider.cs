@@ -1,11 +1,19 @@
 ﻿namespace CodingTest.Runtime.Provider
 {
-    public sealed class ReplayProvider : AbstractProvider<ReplayProvider>
+    internal sealed class ReplayProvider : AbstractProvider<ReplayProvider>
     {
         //private readonly Recording recording = new(fileName: "Replay");
 
-        public string RecordingName = string.Empty;
+        internal string RecordingName = string.Empty;
 
-        public void SetRecordingName(string name) => RecordingName = name;
+        internal bool IsRecording { get; private set; }
+        internal bool IsReplaying { get; private set; }
+
+        internal void SetRecordingName(string name) => RecordingName = name;
+        internal void StartRecording() => IsRecording = true;
+        internal void StopRecording() => IsRecording = false;
+
+        internal void StartReplaying() => IsReplaying = true;
+        internal void StopReplaying() => IsReplaying = false;
     }
 }

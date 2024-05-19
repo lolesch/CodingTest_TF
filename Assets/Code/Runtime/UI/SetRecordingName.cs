@@ -13,5 +13,8 @@ namespace CodingTest.Runtime.UI
 
         private void OnDisable() => InputField.onEndEdit.RemoveListener(ReplayProvider.Instance.SetRecordingName);
         private void OnEnable() => InputField.onEndEdit.AddListener(ReplayProvider.Instance.SetRecordingName);
+
+        // TODO: make it event based instead of update
+        private void FixedUpdate() => InputField.interactable = !ReplayProvider.Instance.IsRecording && !ReplayProvider.Instance.IsReplaying;
     }
 }

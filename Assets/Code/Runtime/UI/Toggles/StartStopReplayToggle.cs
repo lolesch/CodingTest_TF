@@ -2,20 +2,20 @@
 
 namespace CodingTest.Runtime.UI.Toggles
 {
-    public sealed class StartStopRecordingToggle : AbstractToggle
+    public sealed class StartStopReplayToggle : AbstractToggle
     {
         protected override void Toggle(bool isOn)
         {
             if (isOn)
-                ReplayProvider.Instance.StartRecording();
+                ReplayProvider.Instance.StartReplaying();
             else
-                ReplayProvider.Instance.StopRecording();
+                ReplayProvider.Instance.StopReplaying();
         }
 
         // TODO: tooltip for required fileName
 
         // TODO: make it event based instead of update
         private void FixedUpdate() => interactable = ReplayProvider.Instance.RecordingName != string.Empty
-            && !ReplayProvider.Instance.IsReplaying;
+            && !ReplayProvider.Instance.IsRecording;
     }
 }
