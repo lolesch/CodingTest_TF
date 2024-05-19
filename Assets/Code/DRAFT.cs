@@ -28,13 +28,9 @@
  * The recording should iterate over all timestamps and when the timestamp is reached, call its action.
  * This means, that the saved data has to be linked with the corresponding gameObject it was executed from
  * 
+ * tooltip for disabled InputArea while playing a recording
  */
 
-/* input seite -> receiver 
- * static event auf button
- * tooltip provider der darauf reagiert und tooltip wird angezeigt/gestoppt
- * 
- * how to save the individual commands
- * 
+/* how to save the individual commands
  */
 

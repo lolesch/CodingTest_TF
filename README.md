@@ -35,10 +35,10 @@
 > 	- [ ] replayed at a later time. 
 > - [x] Put the controls for this feature (Start/Stop Recording button, Recording name input field and Load and play recording button) at the top of the screen. 
 > - [ ] To specify which recording should be started or loaded the user has to type in the name of the recording in an input field. 
-> 	- [ ] inputField OnSubmit -> 
+> 	- [x] inputField OnSubmit -> 
 > 	- [ ] disable the startRecording button when no name is entered
 > 		- [ ] tooltip that a name is required for the recording to start
-> - [ ] After a recording has been started by clicking the start recording button, the start recording button should transform into a stop recording button. 
+> - [x] After a recording has been started by clicking the start recording button, the start recording button should transform into a stop recording button. 
 > - [ ] When the recording is stopped via the stop recording button, the recording gets saved.
 > - [ ] If the user makes and saves a recording, they should be able to replay it even after restarting the application. 
 > - [ ] When the recording is replayed the recorded actions should be performed in the same sequence and with the same speed. 
@@ -49,7 +49,5 @@ bonus:
 - show all saved recordings in a dropdown
 - confirm popup if recording name will overwrite existing recording
 	- rename option
-
-
-![[Wireframes.png]]
+- time slider?
 

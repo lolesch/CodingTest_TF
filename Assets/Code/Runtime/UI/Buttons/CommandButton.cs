@@ -15,8 +15,8 @@ namespace CodingTest_TF.Runtime.UI.Buttons
         private CycleColorCommand cycleColorCommand;
         private ApplyColorCommand applyColorCommand;
 
+        // can we make this a separate component?
         private Coroutine showTooltip;
-
 
         public static event Action<string> OnShowTooltip;
         public static event Action OnHideTooltip;
@@ -67,8 +67,6 @@ namespace CodingTest_TF.Runtime.UI.Buttons
             base.OnPointerExit(eventData);
 
             HideTooltip();
-
-            //showTooltipCommand.UnExecute();
         }
 
         private void HideTooltip()
@@ -76,6 +74,8 @@ namespace CodingTest_TF.Runtime.UI.Buttons
             if (showTooltip != null)
                 StopCoroutine(showTooltip);
 
+            //hideTooltipCommand.Execute();
+            //TODO: move the event into the command
             OnHideTooltip?.Invoke();
         }
 
@@ -83,9 +83,9 @@ namespace CodingTest_TF.Runtime.UI.Buttons
         {
             yield return new WaitForSeconds(delay);
 
-            OnShowTooltip?.Invoke(tooltipText);
-
             //showTooltipCommand.Execute();
+            //TODO: move the event into the command
+            OnShowTooltip?.Invoke(tooltipText);
         }
 
         public void OnBeginDrag(PointerEventData eventData) => HideTooltip();

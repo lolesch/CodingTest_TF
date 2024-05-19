@@ -1,7 +1,7 @@
 ﻿using CodingTest_TF.Data.Enums;
+using CodingTest_TF.Data.Recordings;
 using CodingTest_TF.Runtime.UI.Buttons;
 using CodingTest_TF.Utility.Extensions;
-using System;
 using UnityEngine;
 
 namespace CodingTest_TF.Runtime.CommandPattern
@@ -12,9 +12,12 @@ namespace CodingTest_TF.Runtime.CommandPattern
 
         [SerializeField] private CommandButton receiver;
 
-        public void UnExecute() => throw new NotImplementedException();
+        public void Execute()
+        {
+            ApplyColor(receiver.CurrentTint);
 
-        public void Execute() => ApplyColor(receiver.CurrentTint);
+            ActionRecording.AddEntry(this);
+        }
 
         private void ApplyColor(ButtonTint tint) => receiver.targetGraphic.color = tint switch
         {

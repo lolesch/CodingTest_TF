@@ -11,19 +11,34 @@ using UnityEngine;
 
 namespace CodingTest_TF.Data.Recordings
 {
-    public sealed class ActionRecording
+    public sealed class ActionRecording : MonoBehaviour
     {
-        private readonly string fileName = string.Empty;
+        // TODO: listen for inputField onEndEdit to set fileName
+        [field: SerializeField] private string fileName = string.Empty;
+        [field: SerializeField] private static float startedRecordingTime = 0;
+        [field: SerializeField] private bool IsRecording { get; set; }
+        [field: SerializeField] private bool IsPlaying { get; set; }
+        [field: SerializeField] private static readonly List<RecordingEntry> entries = new();
+        [field: SerializeField] private GameState CurrentState { get; set; }
 
-        public GameState CurrentState { get; private set; }
+        private void OnDisable()
+        {
+            StartRecordingCommand.OnStartRecording -= StartRecording;
+            SetFileNameCommand.OnSetFileName -= SetFileName;
+        }
 
-        private bool IsRecording { get; set; }
-        private bool IsPlaying { get; set; }
+        private void OnEnable()
+        {
+            StartRecordingCommand.OnStartRecording -= StartRecording;
+            StartRecordingCommand.OnStartRecording += StartRecording;
+            SetFileNameCommand.OnSetFileName -= SetFileName;
+            SetFileNameCommand.OnSetFileName += SetFileName;
+        }
 
-        private readonly List<RecordingEntry> entries;
+        private void SetFileName(string fileName) => this.fileName = fileName;
 
-        private void AddEntry(float timestamp, ICommand command) =>
-            entries.Add(new RecordingEntry(timestamp, command));
+        public static void AddEntry(ICommand command) =>
+            entries.Add(new RecordingEntry(Time.time - startedRecordingTime, command));
 
         private void StartRecording()
         {
@@ -33,39 +48,50 @@ namespace CodingTest_TF.Data.Recordings
 
                 return;
             }
+
+            startedRecordingTime = Time.time;
+            IsRecording = true;
+
             // disable inputField and PlayButton
 
-            AddEntry(Time.time, null);
+            // toggle to stopRecordingButton
+
+            AddEntry(null);
         }
 
         private void StopRecording()
         {
-            AddEntry(Time.time, null);
+            AddEntry(null);
 
-            // OrderByDecending
-            // this allows reverse lookup with removal without reordering the entire list
-            entries.Sort((a, b) => b.timestamp.CompareTo(a.timestamp));
+            IsRecording = false;
 
+            // save recording
             SaveGameState(fileName);
         }
 
-        // save recording
-
-        // load recording
-
-        // play recording
-
         private IEnumerator PlayRecording()
         {
-            _ = Time.time;
+            // load recording
+            var startedPlayingTime = Time.time;
 
-            for (var i = entries.Count; i-- > 0;)
+            var i = 0;
+
+            while (i < entries.Count)
             {
+                yield return new WaitForFixedUpdate();
 
-                entries[i].command?.Execute();
-                yield return null;
+                var timePassed = Time.time - startedPlayingTime;
+
+                if (entries[i].timestamp < timePassed)
+                {
+                    entries[i].command?.Execute();
+                    i++;
+                }
             }
         }
+
+        // stop / pause playing
+        private void StopPlaying() => IsPlaying = false;
 
         public class GameState : ISerializable<GameStateMemento>
         {
@@ -99,7 +125,6 @@ namespace CodingTest_TF.Data.Recordings
             }
 
             serializer.WriteObject(stream, memento);
-
 
             SerialisationProvider.Instance.Save(Constants.SaveDirectory, fileName, stream);
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodingTest_TF.Data.Recordings;
+using System;
 
 namespace CodingTest_TF.Runtime.CommandPattern
 {
@@ -9,9 +10,11 @@ namespace CodingTest_TF.Runtime.CommandPattern
 
         public OpenPopupCommand(string popupText) => this.popupText = popupText;
 
-        public void UnExecute() => throw new NotImplementedException();
+        public void Execute()
+        {
+            OnShowPopup?.Invoke(popupText);
 
-        // recording entry
-        public void Execute() => OnShowPopup?.Invoke(popupText);
+            ActionRecording.AddEntry(this);
+        }
     }
 }
