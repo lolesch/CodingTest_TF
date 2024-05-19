@@ -1,4 +1,4 @@
-using CodingTest.Runtime.UI.Buttons;
+using CodingTest.Runtime.CommandPattern;
 using CodingTest.Utility.Extensions;
 using TMPro;
 using UnityEngine;
@@ -17,17 +17,17 @@ namespace CodingTest.Runtime.UI.Panels
         {
             base.OnDisable();
 
-            CommandButton.OnShowTooltip -= ShowTooltip;
-            CommandButton.OnHideTooltip -= HideTooltip;
+            ShowTooltipCommand.OnShowTooltip -= ShowTooltip;
+            HideTooltipCommand.OnHideTooltip -= HideTooltip;
         }
 
         private void OnEnable()
         {
-            CommandButton.OnShowTooltip -= ShowTooltip;
-            CommandButton.OnShowTooltip += ShowTooltip;
+            ShowTooltipCommand.OnShowTooltip -= ShowTooltip;
+            ShowTooltipCommand.OnShowTooltip += ShowTooltip;
 
-            CommandButton.OnHideTooltip -= HideTooltip;
-            CommandButton.OnHideTooltip += HideTooltip;
+            HideTooltipCommand.OnHideTooltip -= HideTooltip;
+            HideTooltipCommand.OnHideTooltip += HideTooltip;
         }
 
         private void Start() => tooltip = GetComponentInChildren<TextMeshProUGUI>();
@@ -55,10 +55,10 @@ namespace CodingTest.Runtime.UI.Panels
             /// pivot pointing towards center of screen
             var pivotX = showLeft ? 0 : 1;
             var pivotY = Input.mousePosition.y.MapTo01(0, Screen.height);
-            Transform.pivot = new(pivotX, pivotY);
+            RectTransform.pivot = new(pivotX, pivotY);
 
-            var mousePos = (Vector2)Input.mousePosition / Transform.lossyScale;
-            Transform.anchoredPosition = new Vector2(mousePos.x + OffsetX, mousePos.y);
+            var mousePos = (Vector2)Input.mousePosition / RectTransform.lossyScale;
+            RectTransform.anchoredPosition = new Vector2(mousePos.x + OffsetX, mousePos.y);
         }
     }
 }

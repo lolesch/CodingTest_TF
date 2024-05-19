@@ -9,7 +9,9 @@
 - extendibility
 
 > [!bug] Urgent!
-> - [ ] import fading panels for tooltip and popup
+> - [ ] lookup the memento within mementos from Ruadh:WB
+> - [ ] continue with serialising the ICommands
+> - [ ] replay logic
 
 > [!example]- 1 - BUTTON ACTIONS
 > - [x] Create three buttons in the main view of the application. 
@@ -29,21 +31,21 @@
 > 		- [x] if you right click a blue button it should turn red
 
 > [!example] 2 - RECORDING AND REPLAY 
-> - [ ] Create a recording system with which all user actions can be
-> 	- [ ] recorded, 
-> 	- [ ] saved and 
-> 	- [ ] replayed at a later time. 
+> - [x] Create a recording system with which all user actions can be
+> 	- [x] recorded, 
+> 	- [x] saved and 
+> 	- [x] replayed at a later time. 
 > - [x] Put the controls for this feature (Start/Stop Recording button, Recording name input field and Load and play recording button) at the top of the screen. 
 > - [ ] To specify which recording should be started or loaded the user has to type in the name of the recording in an input field. 
 > 	- [x] inputField OnSubmit -> 
 > 	- [ ] disable the startRecording button when no name is entered
 > 		- [ ] tooltip that a name is required for the recording to start
 > - [x] After a recording has been started by clicking the start recording button, the start recording button should transform into a stop recording button. 
-> - [ ] When the recording is stopped via the stop recording button, the recording gets saved.
+> - [x] When the recording is stopped via the stop recording button, the recording gets saved.
 > - [ ] If the user makes and saves a recording, they should be able to replay it even after restarting the application. 
 > - [ ] When the recording is replayed the recorded actions should be performed in the same sequence and with the same speed. 
 > - [ ] The recorded actions should include all button actions mentioned above. 
-> - [ ] When starting and stopping a recording with a previously used name, saving it should just overwrite the save for the old recording with the same name.
+> - [x] When starting and stopping a recording with a previously used name, saving it should just overwrite the save for the old recording with the same name.
 
 bonus:
 - show all saved recordings in a dropdown

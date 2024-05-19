@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CodingTest.Runtime.Provider;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace CodingTest.Runtime.UI
@@ -6,22 +7,14 @@ namespace CodingTest.Runtime.UI
     [RequireComponent(typeof(RectTransform))]
     public sealed class Draggable : MonoBehaviour, IDragHandler
     {
-        /// <summary>
-        /// A cached reference to the RectTransform
-        /// </summary>
-        public RectTransform RectTransform
-        {
-            get
-            {
-                if (m_rectTransform == null)
-                    m_rectTransform = GetComponent<RectTransform>();
-                return m_rectTransform;
-            }
-        }
-        private RectTransform m_rectTransform;
+        private RectTransform rectTransform;
+        public RectTransform RectTransform => rectTransform == null ? rectTransform = GetComponent<RectTransform>() : rectTransform;
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (ReplayProvider.Instance.IsReplaying)
+                return;
+
             RectTransform.anchoredPosition += eventData.delta / RectTransform.lossyScale;
             RectTransform.anchoredPosition = ClampToParentRect();
         }

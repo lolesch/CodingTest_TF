@@ -1,21 +1,32 @@
-﻿using CodingTest.Data.ReplaySystem;
-using UnityEngine;
+﻿using CodingTest.Runtime.Provider;
+using CodingTest.Runtime.Serialization;
+using System;
+using System.Runtime.Serialization;
 
 namespace CodingTest.Runtime.CommandPattern
 {
-    public sealed class ShowTooltipCommand : ICommand
+    public sealed class ShowTooltipCommand : ICommand, ISerializable<ShowTooltipCommand.Memento>
     {
         private readonly string tooltip;
+        public static event Action<string> OnShowTooltip;
 
         public ShowTooltipCommand(string tooltip) => this.tooltip = tooltip;
 
-        // invoke action
-        // have a tooltip object listening to this action?
         public void Execute()
         {
-            Debug.Log($"TODO: show the tooltip with this text: {tooltip}");
+            OnShowTooltip?.Invoke(tooltip);
 
-            Recording.AddEntry(this);
+            ReplayProvider.Instance.AddEntry(Serialize());
+        }
+        public Memento Serialize() => throw new System.NotImplementedException();
+        public void Deserialize(Memento memento) => throw new System.NotImplementedException();
+
+        [DataContract]
+        public class Memento : AbstractICommandMemento
+        {
+            public Memento(ICommand command) : base(command)
+            {
+            }
         }
     }
 }

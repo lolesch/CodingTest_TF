@@ -1,41 +1,43 @@
 ﻿using CodingTest.Data;
 using CodingTest.Data.Enums;
 using CodingTest.Runtime.CommandPattern;
-using System;
+using CodingTest.Runtime.Provider;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace CodingTest.Runtime.UI.Buttons
 {
-    public sealed class CommandButton : AbstractButton, IBeginDragHandler, IEndDragHandler
+    public sealed class RecordableButton : AbstractButton, IBeginDragHandler, IEndDragHandler
     {
         private OpenPopupCommand openPopupCommand;
         private ShowTooltipCommand showTooltipCommand;
+        private HideTooltipCommand hideTooltipCommand;
         private CycleColorCommand cycleColorCommand;
         private ApplyColorCommand applyColorCommand;
 
         // can we make this a separate component?
         private Coroutine showTooltip;
 
-        public static event Action<string> OnShowTooltip;
-        public static event Action OnHideTooltip;
-
         [Header("Initial Values")]
         [SerializeField] private string popupText = $"Set the popup text in the inspector";
         [SerializeField] private string tooltipText = $"Set the tooltip text in the inspector";
-        public ButtonTint CurrentTint = ButtonTint.Red;
+        [SerializeField] internal ButtonTint CurrentTint = ButtonTint.Red;
 
         protected override void Start()
         {
             base.Start();
             openPopupCommand = new OpenPopupCommand(popupText);
             showTooltipCommand = new ShowTooltipCommand(tooltipText);
+            hideTooltipCommand = new HideTooltipCommand();
             cycleColorCommand = new CycleColorCommand(this);
             applyColorCommand = new ApplyColorCommand(this);
 
             applyColorCommand.Execute();
         }
+
+        // TODO: make it event based instead of update
+        private void FixedUpdate() => interactable = !ReplayProvider.Instance.IsReplaying;
 
         protected override void OnLeftClick()
         {
@@ -74,18 +76,14 @@ namespace CodingTest.Runtime.UI.Buttons
             if (showTooltip != null)
                 StopCoroutine(showTooltip);
 
-            //hideTooltipCommand.Execute();
-            //TODO: move the event into the command
-            OnHideTooltip?.Invoke();
+            hideTooltipCommand.Execute();
         }
 
         private IEnumerator ShowTooltip(float delay)
         {
             yield return new WaitForSeconds(delay);
 
-            //showTooltipCommand.Execute();
-            //TODO: move the event into the command
-            OnShowTooltip?.Invoke(tooltipText);
+            showTooltipCommand.Execute();
         }
 
         public void OnBeginDrag(PointerEventData eventData) => HideTooltip();

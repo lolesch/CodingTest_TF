@@ -204,7 +204,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5359056578930345019}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 926b328a950b05e4d895b519d56ef10d, type: 3}
+  m_Script: {fileID: 11500000, guid: 58db0d54f41ab7542b33e85c7e8b876a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -236,7 +236,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 2937797323305613573}
-  popupText: Set the tooltip text in the inspector or in the referenced SO
+  popupText: Set the popup text in the inspector
   tooltipText: Set the tooltip text in the inspector
   CurrentTint: 1
 --- !u!114 &5615261146838097649

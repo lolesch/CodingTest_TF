@@ -1,25 +1,27 @@
 ﻿using CodingTest.Data.Enums;
-using CodingTest.Data.ReplaySystem;
+using CodingTest.Runtime.Provider;
+using CodingTest.Runtime.Serialization;
 using CodingTest.Runtime.UI.Buttons;
 using CodingTest.Utility.Extensions;
+using System.Runtime.Serialization;
 using UnityEngine;
 
 namespace CodingTest.Runtime.CommandPattern
 {
-    public sealed class ApplyColorCommand : ICommand
+    public sealed class ApplyColorCommand : ICommand, ISerializable<ApplyColorCommand.Memento>
     {
-        public ApplyColorCommand(CommandButton receiver) => this.receiver = receiver;
+        public ApplyColorCommand(RecordableButton receiver) => this.receiver = receiver;
 
-        [SerializeField] private CommandButton receiver;
+        [SerializeField] private RecordableButton receiver;
 
         public void Execute()
         {
-            ApplyColor(receiver.CurrentTint);
+            ApplyColor();
 
-            Recording.AddEntry(this);
+            ReplayProvider.Instance.AddEntry(Serialize());
         }
 
-        private void ApplyColor(ButtonTint tint) => receiver.targetGraphic.color = tint switch
+        private void ApplyColor() => receiver.targetGraphic.color = receiver.CurrentTint switch
         {
             ButtonTint.Red => ColorExtensions.ButtonRed,
             ButtonTint.Green => ColorExtensions.ButtonGreen,
@@ -27,7 +29,15 @@ namespace CodingTest.Runtime.CommandPattern
 
             _ => receiver.targetGraphic.color
         };
+        public Memento Serialize() => throw new System.NotImplementedException();
+        public void Deserialize(Memento memento) => throw new System.NotImplementedException();
+
+        [DataContract]
+        public class Memento : AbstractICommandMemento
+        {
+            [DataMember] public RecordableButton receiver;
+
+            public Memento(ApplyColorCommand command) : base(command) => receiver = command.receiver;
+        }
     }
-
-
 }

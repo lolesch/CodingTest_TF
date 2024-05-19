@@ -1,27 +1,14 @@
 // DRAFT
 
-/* #Recording:
- * the sequence contains data for each input
- * each input data has a time stamp and the performed action
- * 
- * drag and drop might contain the drag start time and drop end time and drop position
- * to lerp from current to drop position
+/* RECORD:
+ * drag and drop might contain the drag start time and drop end time 
+ * and drop position to lerp from start to drop position
  * 
  * Starting and stopping the recording will add a time stamp
- * use the start timeStamp to calculate time delta for each data set so we dont need to calculate the delta when playing the recording?
+ * use the start timeStamp to calculate time delta for each data set 
+ * so we dont need to calculate the delta when playing the recording?
  * 
- * The start button should be disabled until a valid string is entered in the input field
- * make a tooltip to communicate this
- * 
- * The InputField should be disabled while recording
- * 
- * The load and Play button should be disabled while recording
- * 
- * make the load and play button a toggle to stop the playing recording
- * 
- * Add a pause button?
- * 
- * LOAD AND PLAY:
+ * REPLAY:
  * when loading a recording, it should automatically start playing
  * this means that ActionButton interaction should be disabled while playing
  * 

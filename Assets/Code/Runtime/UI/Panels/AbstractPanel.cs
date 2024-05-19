@@ -1,5 +1,4 @@
-﻿using CodingTest.Utility.AttributeRefs;
-using DG.Tweening;
+﻿using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,18 +14,11 @@ namespace CodingTest.Runtime.UI.Panels
     public abstract class AbstractPanel : MonoBehaviour
     {
         #region COMPONENT REFERENCES
-        [field: SerializeField, ReadOnly] protected CanvasGroup _canvasGroup = null;
-        /// <summary>
-        /// A cached reference of the CanvasGroup
-        /// </summary>
-        public CanvasGroup CanvasGroup => _canvasGroup != null ? _canvasGroup : _canvasGroup = GetComponent<CanvasGroup>();
+        protected CanvasGroup canvasGroup = null;
+        public CanvasGroup CanvasGroup => canvasGroup == null ? canvasGroup = GetComponent<CanvasGroup>() : canvasGroup;
 
-        [field: SerializeField, ReadOnly] protected RectTransform _transform = null;
-
-        /// <summary>
-        /// A cached reference of the RectTransform
-        /// </summary>
-        public RectTransform Transform => _transform != null ? _transform : _transform = GetComponent<RectTransform>();
+        private RectTransform rectTransform;
+        public RectTransform RectTransform => rectTransform == null ? rectTransform = GetComponent<RectTransform>() : rectTransform;
         #endregion COMPONENT REFERENCES
 
         public bool IsActive => CanvasGroup.alpha == 1;

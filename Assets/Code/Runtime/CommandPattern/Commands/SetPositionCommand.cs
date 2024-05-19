@@ -1,20 +1,25 @@
 ﻿using CodingTest.Runtime.Provider;
 using CodingTest.Runtime.Serialization;
-using System;
+using CodingTest.Runtime.UI.Buttons;
 using System.Runtime.Serialization;
+using UnityEngine;
 
 namespace CodingTest.Runtime.CommandPattern
 {
-    public sealed class OpenPopupCommand : ICommand, ISerializable<OpenPopupCommand.Memento>
+    public sealed class SetPositionCommand : ICommand, ISerializable<SetPositionCommand.Memento>
     {
-        private readonly string popupText;
-        public static event Action<string> OnShowPopup;
+        public SetPositionCommand(Vector2 position, RecordableButton receiver)
+        {
+            this.position = position;
+            this.receiver = receiver;
+        }
 
-        public OpenPopupCommand(string popupText) => this.popupText = popupText;
+        [SerializeField] private Vector2 position;
+        [SerializeField] private RecordableButton receiver;
 
         public void Execute()
         {
-            OnShowPopup?.Invoke(popupText);
+            receiver.transform.position = position;
 
             ReplayProvider.Instance.AddEntry(Serialize());
         }

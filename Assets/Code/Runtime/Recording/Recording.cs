@@ -1,8 +1,5 @@
-using CodingTest.Runtime.CommandPattern;
 using CodingTest.Runtime.Provider;
 using CodingTest.Runtime.Serialization;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
@@ -11,106 +8,31 @@ using UnityEngine;
 
 namespace CodingTest.Data.ReplaySystem
 {
-    public sealed class Recording : MonoBehaviour
+    public class Recording : ISerializable<Recording.Memento>
     {
-        public Recording(string fileName) => this.fileName = fileName;
-
-        // TODO: listen for inputField onEndEdit to set fileName
-        [field: SerializeField] private string fileName = string.Empty;
         [field: SerializeField] private static float startedRecordingTime = 0;
-        [field: SerializeField] private bool IsRecording { get; set; }
-        [field: SerializeField] private bool IsPlaying { get; set; }
-        [field: SerializeField] private static readonly List<RecordingEntry> entries = new();
-        [field: SerializeField] private GameState CurrentState { get; set; }
 
-        private void OnDisable() => StartRecordingCommand.OnStartRecording -= StartRecording;
+        public List<RecordingEntry> Entries;
 
-        private void OnEnable()
+        public Recording() => Debug.LogWarning("Created new Recording");
+
+        public Recording(Memento memento) => Deserialize(memento);
+
+        // the command stores the receiver, so we dont need that here
+        public void AddEntry(AbstractICommandMemento commandMemento)
         {
-            StartRecordingCommand.OnStartRecording -= StartRecording;
-            StartRecordingCommand.OnStartRecording += StartRecording;
+            Entries ??= new List<RecordingEntry>();
+
+            Entries.Add(new RecordingEntry(Time.time - startedRecordingTime, commandMemento));
         }
 
-        public static void AddEntry(ICommand command) =>
-            entries.Add(new RecordingEntry(Time.time - startedRecordingTime, command));
-
-        private void StartRecording()
+        public void Save(string fileName)
         {
-            if (fileName == string.Empty)
-            {
-                Debug.LogError("File name cannot be empty");
-
-                return;
-            }
-
-            startedRecordingTime = Time.time;
-            IsRecording = true;
-
-            // disable inputField and PlayButton
-
-            // toggle to stopRecordingButton
-
-            AddEntry(null);
-        }
-
-        private void StopRecording()
-        {
-            AddEntry(null);
-
-            IsRecording = false;
-
-            // save recording
-            SaveGameState(fileName);
-        }
-
-        private IEnumerator PlayRecording()
-        {
-            // load recording
-            var startedPlayingTime = Time.time;
-
-            var i = 0;
-
-            while (i < entries.Count)
-            {
-                yield return new WaitForFixedUpdate();
-
-                var timePassed = Time.time - startedPlayingTime;
-
-                if (entries[i].timestamp < timePassed)
-                {
-                    entries[i].command?.Execute();
-                    i++;
-                }
-            }
-        }
-
-        // stop / pause playing
-        private void StopPlaying() => IsPlaying = false;
-
-        public class GameState : ISerializable<GameStateMemento>
-        {
-            public GameState() => Debug.LogWarning("Created new GamesState");
-            public GameState(GameStateMemento memento) => Deserialize(memento);
-
-            public void Deserialize(GameStateMemento memento) => throw new NotImplementedException();
-            public GameStateMemento Serialize() => throw new NotImplementedException();
-        }
-
-        [DataContract]
-        public class GameStateMemento : AbstractMemento
-        {
-            [DataMember] public string VersionString = string.Empty;
-
-            public GameStateMemento(string versionString) => VersionString = versionString;
-        }
-
-        public void SaveGameState(string fileName)
-        {
-            var serializer = new DataContractJsonSerializer(typeof(GameStateMemento));
+            var serializer = new DataContractJsonSerializer(typeof(Recording.Memento));
 
             var stream = new MemoryStream();
 
-            var memento = CurrentState.Serialize();
+            var memento = Serialize();
 
             if (stream == null || memento == null)
             {
@@ -123,36 +45,55 @@ namespace CodingTest.Data.ReplaySystem
             SerialisationProvider.Instance.Save(Constants.SaveDirectory, fileName, stream);
         }
 
-        private GameState LoadGameState()
+        public static Recording Load(string fileName)
         {
             var stream = SerialisationProvider.Instance.Load(Constants.SaveDirectory, fileName);
 
             //loadedStateFromFile = true;
 
             if (stream == null)
-                return new GameState();
+                return new Recording();
 
-            var serializer = new DataContractJsonSerializer(typeof(GameStateMemento));
+            var serializer = new DataContractJsonSerializer(typeof(Recording.Memento));
 
             // try catch...
-            var memento = (GameStateMemento)serializer.ReadObject(stream);
+            var memento = (Recording.Memento)serializer.ReadObject(stream);
 
             // => OnLoadingCompleted?.Invoke();
 
-            return new GameState(memento);
+            return new Recording(memento);
         }
-    }
 
-    public readonly struct RecordingEntry
-    {
-        public readonly float timestamp;
-        public readonly ICommand command;
-
-        public RecordingEntry(float timestamp, ICommand command)
+        public Memento Serialize() => new(startedRecordingTime, Entries);
+        public void Deserialize(Memento memento)
         {
-            this.timestamp = timestamp;
-            this.command = command;
+            startedRecordingTime = memento.StartedRecordingTime;
+            Entries = memento.Entries;
+        }
+
+        [DataContract]
+        public sealed class Memento : AbstractMemento
+        {
+            [DataMember] public float StartedRecordingTime = 0;
+            [DataMember] public List<RecordingEntry> Entries = new();
+
+            public Memento(float startedRecordingTime, List<RecordingEntry> entries)
+            {
+                StartedRecordingTime = startedRecordingTime;
+                Entries = entries;
+            }
+        }
+
+        public readonly struct RecordingEntry
+        {
+            public readonly float timestamp;
+            public readonly AbstractICommandMemento commandMemento;
+
+            public RecordingEntry(float timestamp, AbstractICommandMemento commandMemento)
+            {
+                this.timestamp = timestamp;
+                this.commandMemento = commandMemento;
+            }
         }
     }
 }
-
