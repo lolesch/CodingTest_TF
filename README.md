@@ -1,4 +1,4 @@
-[https://lolesch.github.io/CodingTest_TF/](CodingTest WebGL Build)
+https://lolesch.github.io/CodingTest_TF/
 # CodingTest Tasks
 
 > [!example]- 1 - BUTTON ACTIONS
