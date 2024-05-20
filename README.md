@@ -1,19 +1,4 @@
-# CodingTest_TF
-
-- Send us your results as a .unitypackage file.
-
-- functionality 
-- readability
-- consistent coding style
-- performance / memory efficiency
-- extendibility
-
-> [!bug] Urgent!
-> - [x] lookup the memento within mementos from Ruadh:WB
-> - [x] continue with serialising the ICommands
-> - [x] review replay logic
-> - [x] tooltips appear at mouse position when replayed
-> - [x] lerp drag and drop position in replay
+# CodingTest Tasks
 
 > [!example]- 1 - BUTTON ACTIONS
 > - [x] Create three buttons in the main view of the application. 
