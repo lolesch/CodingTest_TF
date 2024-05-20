@@ -1,4 +1,5 @@
 ﻿using CodingTest.Runtime.CommandPattern;
+using CodingTest.Runtime.Provider;
 
 namespace CodingTest.Runtime.UI.Buttons
 {
@@ -11,6 +12,9 @@ namespace CodingTest.Runtime.UI.Buttons
             base.Start();
             closePopupCommand = new ClosePopupCommand();
         }
+
+        // TODO: make it event based instead of update
+        private void FixedUpdate() => interactable = !ReplayProvider.Instance.IsReplaying;
 
         protected override void OnLeftClick() => closePopupCommand.Execute();
         protected override void OnRightClick() { }
