@@ -35,9 +35,10 @@ https://lolesch.github.io/CodingTest_TF/
 > - [x] The recorded actions should include all button actions mentioned above. 
 > - [x] When starting and stopping a recording with a previously used name, saving it should just overwrite the save for the old recording with the same name.
 
-bonus:
-- show all saved recordings in a dropdown
-- confirm popup if recording name will overwrite existing recording
-	- rename option
-- replay time slider?
+
+> [!example] 3 - BONUS TASKS
+> - [ ] show all saved recordings in a dropdown
+> - [ ] confirm popup if recording name will overwrite existing recording
+> 	- [ ] rename option
+> - [ ] replay time slider?
 
