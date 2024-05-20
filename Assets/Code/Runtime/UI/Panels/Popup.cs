@@ -11,13 +11,18 @@ namespace CodingTest.Runtime.UI.Panels
             base.OnDisable();
 
             OpenPopupCommand.OnShowPopup -= OpenPopup;
+            ClosePopupCommand.OnHidePopup -= ClosePopup;
         }
 
         private void OnEnable()
         {
             OpenPopupCommand.OnShowPopup -= OpenPopup;
             OpenPopupCommand.OnShowPopup += OpenPopup;
+
+            ClosePopupCommand.OnHidePopup -= ClosePopup;
+            ClosePopupCommand.OnHidePopup += ClosePopup;
         }
+
         private void Start() => popupText = GetComponentInChildren<TextMeshProUGUI>();
 
         private void OpenPopup(string text)
@@ -26,5 +31,7 @@ namespace CodingTest.Runtime.UI.Panels
 
             FadeIn();
         }
+
+        private void ClosePopup() => FadeOut();
     }
 }

@@ -1,5 +1,6 @@
 using CodingTest.Runtime.CommandPattern;
 using CodingTest.Utility.Extensions;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ namespace CodingTest.Runtime.UI.Panels
 {
     public sealed class Tooltip : AbstractPanel
     {
+        private Coroutine showTooltip;
+
         private TextMeshProUGUI tooltip;
         private bool showLeft;
 
@@ -17,14 +20,14 @@ namespace CodingTest.Runtime.UI.Panels
         {
             base.OnDisable();
 
-            ShowTooltipCommand.OnShowTooltip -= ShowTooltip;
+            ShowTooltipCommand.OnShowTooltip -= SetCoroutine;
             HideTooltipCommand.OnHideTooltip -= HideTooltip;
         }
 
         private void OnEnable()
         {
-            ShowTooltipCommand.OnShowTooltip -= ShowTooltip;
-            ShowTooltipCommand.OnShowTooltip += ShowTooltip;
+            ShowTooltipCommand.OnShowTooltip -= SetCoroutine;
+            ShowTooltipCommand.OnShowTooltip += SetCoroutine;
 
             HideTooltipCommand.OnHideTooltip -= HideTooltip;
             HideTooltipCommand.OnHideTooltip += HideTooltip;
@@ -38,9 +41,20 @@ namespace CodingTest.Runtime.UI.Panels
                 SetPosition();
         }
 
-        private void HideTooltip() => FadeOut();
-        private void ShowTooltip(string text)
+        private void HideTooltip()
         {
+            if (showTooltip != null)
+                StopCoroutine(showTooltip);
+
+            FadeOut();
+        }
+
+        private void SetCoroutine(string text, float delay) => showTooltip = StartCoroutine(ShowTooltip(delay, text));
+
+        private IEnumerator ShowTooltip(float delay, string text)
+        {
+            yield return new WaitForSeconds(delay);
+
             tooltip.text = text;
 
             showLeft = Input.mousePosition.x < (Screen.width * 0.5);

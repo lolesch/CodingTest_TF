@@ -1,32 +1,32 @@
 ﻿using CodingTest.Runtime.Provider;
-using CodingTest.Runtime.Serialization;
 using System;
 using System.Runtime.Serialization;
 
 namespace CodingTest.Runtime.CommandPattern
 {
-    public sealed class OpenPopupCommand : ICommand, ISerializable<OpenPopupCommand.Memento>
+    public sealed class OpenPopupCommand : BaseCommand
     {
-        private readonly string popupText;
+        public string popupText { get; private set; }
         public static event Action<string> OnShowPopup;
 
         public OpenPopupCommand(string popupText) => this.popupText = popupText;
+        public OpenPopupCommand(OpenPopupMemento memento) => Deserialize(memento);
 
-        public void Execute()
+        public override void Execute()
         {
             OnShowPopup?.Invoke(popupText);
 
-            ReplayProvider.Instance.AddEntry(Serialize());
+            ReplayProvider.Instance.Record(Serialize());
         }
-        public Memento Serialize() => throw new System.NotImplementedException();
-        public void Deserialize(Memento memento) => throw new System.NotImplementedException();
 
-        [DataContract]
-        public class Memento : AbstractICommandMemento
-        {
-            public Memento(ICommand command) : base(command)
-            {
-            }
-        }
+        public override CommandMemento Serialize() => new OpenPopupMemento(new OpenPopupCommand(popupText));
+        public override void Deserialize(CommandMemento memento) => popupText = (memento as OpenPopupMemento).PopupText;
+    }
+
+    [DataContract]
+    public class OpenPopupMemento : CommandMemento
+    {
+        [DataMember] public readonly string PopupText;
+        public OpenPopupMemento(OpenPopupCommand command) : base(command) => PopupText = command.popupText;
     }
 }

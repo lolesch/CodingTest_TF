@@ -1,43 +1,55 @@
 ﻿using CodingTest.Data.Enums;
 using CodingTest.Runtime.Provider;
-using CodingTest.Runtime.Serialization;
 using CodingTest.Runtime.UI.Buttons;
 using CodingTest.Utility.Extensions;
+using System;
 using System.Runtime.Serialization;
-using UnityEngine;
 
 namespace CodingTest.Runtime.CommandPattern
 {
-    public sealed class ApplyColorCommand : ICommand, ISerializable<ApplyColorCommand.Memento>
+    public sealed class ApplyColorCommand : BaseCommand
     {
-        public ApplyColorCommand(RecordableButton receiver) => this.receiver = receiver;
+        public ApplyColorCommand(RecordableButton receiver) => Receiver = receiver;
 
-        [SerializeField] private RecordableButton receiver;
+        public ApplyColorCommand(ApplyColorMemento memento) => Deserialize(memento);
 
-        public void Execute()
+        public RecordableButton Receiver { get; private set; }
+
+        public override void Execute()
         {
             ApplyColor();
 
-            ReplayProvider.Instance.AddEntry(Serialize());
+            ReplayProvider.Instance.Record(Serialize());
         }
 
-        private void ApplyColor() => receiver.targetGraphic.color = receiver.CurrentTint switch
+        private void ApplyColor() => Receiver.targetGraphic.color = Receiver.CurrentTint switch
         {
             ButtonTint.Red => ColorExtensions.ButtonRed,
             ButtonTint.Green => ColorExtensions.ButtonGreen,
             ButtonTint.Blue => ColorExtensions.ButtonBlue,
 
-            _ => receiver.targetGraphic.color
+            _ => Receiver.targetGraphic.color
         };
-        public Memento Serialize() => throw new System.NotImplementedException();
-        public void Deserialize(Memento memento) => throw new System.NotImplementedException();
 
-        [DataContract]
-        public class Memento : AbstractICommandMemento
+        public override CommandMemento Serialize() => new ApplyColorMemento(this);
+        public override void Deserialize(CommandMemento memento)
         {
-            [DataMember] public RecordableButton receiver;
+            var m = memento as ApplyColorMemento;
+            Receiver = ReplayProvider.Instance.RecordableButtons[m.ButtonIndex];
+            Receiver.CurrentTint = m.Tint;
+        }
+    }
 
-            public Memento(ApplyColorCommand command) : base(command) => receiver = command.receiver;
+    [DataContract]
+    public class ApplyColorMemento : CommandMemento
+    {
+        [DataMember] public readonly int ButtonIndex;
+        [DataMember] public readonly ButtonTint Tint;
+
+        public ApplyColorMemento(ApplyColorCommand command) : base(command)
+        {
+            ButtonIndex = Array.IndexOf(ReplayProvider.Instance.RecordableButtons, command.Receiver);
+            Tint = command.Receiver.CurrentTint;
         }
     }
 }

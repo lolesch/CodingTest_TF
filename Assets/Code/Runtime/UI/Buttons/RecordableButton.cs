@@ -2,7 +2,6 @@
 using CodingTest.Data.Enums;
 using CodingTest.Runtime.CommandPattern;
 using CodingTest.Runtime.Provider;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -11,13 +10,11 @@ namespace CodingTest.Runtime.UI.Buttons
     public sealed class RecordableButton : AbstractButton, IBeginDragHandler, IEndDragHandler
     {
         private OpenPopupCommand openPopupCommand;
-        private ShowTooltipCommand showTooltipCommand;
+        private ShowTooltipCommand showTooltipShortDelayCommand;
+        private ShowTooltipCommand showTooltipLongDelayCommand;
         private HideTooltipCommand hideTooltipCommand;
         private CycleColorCommand cycleColorCommand;
         private ApplyColorCommand applyColorCommand;
-
-        // can we make this a separate component?
-        private Coroutine showTooltip;
 
         [Header("Initial Values")]
         [SerializeField] private string popupText = $"Set the popup text in the inspector";
@@ -28,7 +25,8 @@ namespace CodingTest.Runtime.UI.Buttons
         {
             base.Start();
             openPopupCommand = new OpenPopupCommand(popupText);
-            showTooltipCommand = new ShowTooltipCommand(tooltipText);
+            showTooltipShortDelayCommand = new ShowTooltipCommand(tooltipText, Constants.TooltipDelay);
+            showTooltipLongDelayCommand = new ShowTooltipCommand(tooltipText, Constants.TooltipDelayAfterInteraction);
             hideTooltipCommand = new HideTooltipCommand();
             cycleColorCommand = new CycleColorCommand(this);
             applyColorCommand = new ApplyColorCommand(this);
@@ -45,7 +43,7 @@ namespace CodingTest.Runtime.UI.Buttons
 
             openPopupCommand.Execute();
 
-            showTooltip = StartCoroutine(ShowTooltip(Constants.TooltipDelayAfterInteraction));
+            showTooltipLongDelayCommand.Execute();
         }
 
         protected override void OnRightClick()
@@ -55,13 +53,13 @@ namespace CodingTest.Runtime.UI.Buttons
             cycleColorCommand.Execute();
             applyColorCommand.Execute();
 
-            showTooltip = StartCoroutine(ShowTooltip(Constants.TooltipDelayAfterInteraction));
+            showTooltipLongDelayCommand.Execute();
         }
         public override void OnPointerEnter(PointerEventData eventData)
         {
             base.OnPointerEnter(eventData);
 
-            showTooltip = StartCoroutine(ShowTooltip(Constants.TooltipDelay));
+            showTooltipShortDelayCommand.Execute();
         }
 
         public override void OnPointerExit(PointerEventData eventData)
@@ -71,22 +69,19 @@ namespace CodingTest.Runtime.UI.Buttons
             HideTooltip();
         }
 
-        private void HideTooltip()
-        {
-            if (showTooltip != null)
-                StopCoroutine(showTooltip);
+        private void HideTooltip() => hideTooltipCommand.Execute();
 
-            hideTooltipCommand.Execute();
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            HideTooltip();
+            new SetPositionCommand(this, transform.position).Execute();
         }
 
-        private IEnumerator ShowTooltip(float delay)
+        public void OnEndDrag(PointerEventData eventData)
         {
-            yield return new WaitForSeconds(delay);
-
-            showTooltipCommand.Execute();
+            showTooltipLongDelayCommand.Execute();
+            //TODO: lerp instead of set position
+            new SetPositionCommand(this, transform.position).Execute();
         }
-
-        public void OnBeginDrag(PointerEventData eventData) => HideTooltip();
-        public void OnEndDrag(PointerEventData eventData) => showTooltip = StartCoroutine(ShowTooltip(Constants.TooltipDelayAfterInteraction));
     }
 }

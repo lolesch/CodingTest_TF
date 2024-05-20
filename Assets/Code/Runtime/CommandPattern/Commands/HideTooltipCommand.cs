@@ -1,31 +1,30 @@
 ﻿using CodingTest.Runtime.Provider;
-using CodingTest.Runtime.Serialization;
 using System;
 using System.Runtime.Serialization;
 
 namespace CodingTest.Runtime.CommandPattern
 {
-    public sealed class HideTooltipCommand : ICommand, ISerializable<HideTooltipCommand.Memento>
+    public sealed class HideTooltipCommand : BaseCommand
     {
         public static event Action OnHideTooltip;
 
         public HideTooltipCommand() { }
+        public HideTooltipCommand(HideTooltipMemento memento) => Deserialize(memento);
 
-        public void Execute()
+        public override void Execute()
         {
             OnHideTooltip?.Invoke();
 
-            ReplayProvider.Instance.AddEntry(Serialize());
+            ReplayProvider.Instance.Record(Serialize());
         }
-        public Memento Serialize() => throw new System.NotImplementedException();
-        public void Deserialize(Memento memento) => throw new System.NotImplementedException();
 
-        [DataContract]
-        public class Memento : AbstractICommandMemento
-        {
-            public Memento(ICommand command) : base(command)
-            {
-            }
-        }
+        public override CommandMemento Serialize() => new HideTooltipMemento(this);
+        public override void Deserialize(CommandMemento memento) { }
+    }
+
+    [DataContract]
+    public class HideTooltipMemento : CommandMemento
+    {
+        public HideTooltipMemento(BaseCommand command) : base(command) { }
     }
 }

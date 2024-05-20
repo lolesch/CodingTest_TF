@@ -1,4 +1,6 @@
-﻿using CodingTest.Utility.AttributeRefs;
+﻿using CodingTest.Data;
+using CodingTest.Runtime.CommandPattern;
+using CodingTest.Utility.AttributeRefs;
 using DG.Tweening;
 using System;
 using TMPro;
@@ -10,6 +12,12 @@ namespace CodingTest.Runtime.UI.Toggles
 {
     public abstract class AbstractToggle : Selectable, IPointerClickHandler
     {
+        [SerializeField] protected string tooltipText = $"Set the tooltip text in the inspector";
+
+        private ShowTooltipCommand showTooltipShortDelayCommand;
+        private ShowTooltipCommand showTooltipLongDelayCommand;
+        private HideTooltipCommand hideTooltipCommand;
+
         [field: SerializeField] public bool IsOn { get; private set; } = false;
 
         [SerializeField, ReadOnly] protected RadioGroup radioGroup = null;
@@ -60,6 +68,10 @@ namespace CodingTest.Runtime.UI.Toggles
         protected override void Start()
         {
             base.Start();
+
+            showTooltipShortDelayCommand = new ShowTooltipCommand(tooltipText, Constants.TooltipDelay);
+            showTooltipLongDelayCommand = new ShowTooltipCommand(tooltipText, Constants.TooltipDelayAfterInteraction);
+            hideTooltipCommand = new HideTooltipCommand();
 
             SetToggle(IsOn);
         }
@@ -113,6 +125,13 @@ namespace CodingTest.Runtime.UI.Toggles
             if (eventData.button == PointerEventData.InputButton.Left)
                 SetToggle(!IsOn);
         }
+        public override void OnPointerEnter(PointerEventData eventData)
+        {
+            base.OnPointerEnter(eventData);
+
+            if (!interactable)
+                showTooltipShortDelayCommand.Execute();
+        }
 
         public override void OnPointerExit(PointerEventData eventData)
         {
@@ -120,6 +139,8 @@ namespace CodingTest.Runtime.UI.Toggles
 
             if (interactable)
                 DoStateTransition(IsOn ? SelectionState.Selected : SelectionState.Normal, false);
+
+            hideTooltipCommand.Execute();
         }
 
         public virtual void PlayToggleSound(bool isOn) { } // => AudioProvider.Instance.PlayButtonClick();

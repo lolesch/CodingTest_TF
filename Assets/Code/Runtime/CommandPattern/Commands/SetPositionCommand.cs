@@ -1,37 +1,49 @@
 ﻿using CodingTest.Runtime.Provider;
-using CodingTest.Runtime.Serialization;
 using CodingTest.Runtime.UI.Buttons;
 using System.Runtime.Serialization;
 using UnityEngine;
 
 namespace CodingTest.Runtime.CommandPattern
 {
-    public sealed class SetPositionCommand : ICommand, ISerializable<SetPositionCommand.Memento>
+    public sealed class SetPositionCommand : BaseCommand
     {
-        public SetPositionCommand(Vector2 position, RecordableButton receiver)
+        public RecordableButton Receiver { get; private set; }
+        public Vector2 Position { get; private set; }
+
+        public SetPositionCommand(RecordableButton receiver, Vector2 position)
         {
-            this.position = position;
-            this.receiver = receiver;
+            Receiver = receiver;
+            Position = position;
+        }
+        public SetPositionCommand(SetPositionMemento memento) => Deserialize(memento);
+
+        public override void Execute()
+        {
+            Receiver.transform.position = Position;
+
+            ReplayProvider.Instance.Record(Serialize());
         }
 
-        [SerializeField] private Vector2 position;
-        [SerializeField] private RecordableButton receiver;
+        public override CommandMemento Serialize() => new SetPositionMemento(this);
 
-        public void Execute()
+        public override void Deserialize(CommandMemento memento)
         {
-            receiver.transform.position = position;
-
-            ReplayProvider.Instance.AddEntry(Serialize());
+            var m = memento as SetPositionMemento;
+            Receiver = Receiver = ReplayProvider.Instance.RecordableButtons[m.ButtonIndex];
+            Position = m.Position;
         }
-        public Memento Serialize() => throw new System.NotImplementedException();
-        public void Deserialize(Memento memento) => throw new System.NotImplementedException();
+    }
 
-        [DataContract]
-        public class Memento : AbstractICommandMemento
+    [DataContract]
+    public class SetPositionMemento : CommandMemento
+    {
+        [DataMember] public readonly int ButtonIndex = -1;
+        [DataMember] public readonly Vector2 Position;
+
+        public SetPositionMemento(SetPositionCommand command) : base(command)
         {
-            public Memento(ICommand command) : base(command)
-            {
-            }
+            ButtonIndex = ReplayProvider.Instance.GetButtonIndex(command.Receiver);
+            Position = command.Position;
         }
     }
 }

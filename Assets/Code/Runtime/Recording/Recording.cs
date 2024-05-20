@@ -1,3 +1,4 @@
+using CodingTest.Runtime.CommandPattern;
 using CodingTest.Runtime.Provider;
 using CodingTest.Runtime.Serialization;
 using System.Collections.Generic;
@@ -8,22 +9,25 @@ using UnityEngine;
 
 namespace CodingTest.Data.ReplaySystem
 {
-    public class Recording : ISerializable<Recording.Memento>
+    public sealed class Recording : ISerializable<Recording.Memento>
     {
         [field: SerializeField] private static float startedRecordingTime = 0;
 
-        public List<RecordingEntry> Entries;
+        public List<RecordingEntryMemento> RecordedCommands;
 
-        public Recording() => Debug.LogWarning("Created new Recording");
+        public Recording()
+        {
+            startedRecordingTime = Time.time;
+            RecordedCommands = new List<RecordingEntryMemento>();
+        }
 
         public Recording(Memento memento) => Deserialize(memento);
 
-        // the command stores the receiver, so we dont need that here
-        public void AddEntry(AbstractICommandMemento commandMemento)
+        public void AddEntry(CommandMemento commandMemento)
         {
-            Entries ??= new List<RecordingEntry>();
+            RecordedCommands ??= new List<RecordingEntryMemento>();
 
-            Entries.Add(new RecordingEntry(Time.time - startedRecordingTime, commandMemento));
+            RecordedCommands.Add(new(Time.time - startedRecordingTime, commandMemento));
         }
 
         public void Save(string fileName)
@@ -64,35 +68,26 @@ namespace CodingTest.Data.ReplaySystem
             return new Recording(memento);
         }
 
-        public Memento Serialize() => new(startedRecordingTime, Entries);
+        public Memento Serialize() => new(startedRecordingTime, RecordedCommands);
+
         public void Deserialize(Memento memento)
         {
             startedRecordingTime = memento.StartedRecordingTime;
-            Entries = memento.Entries;
+
+            RecordedCommands = memento.EntryMementos;
         }
 
         [DataContract]
         public sealed class Memento : AbstractMemento
         {
-            [DataMember] public float StartedRecordingTime = 0;
-            [DataMember] public List<RecordingEntry> Entries = new();
+            [DataMember] public float StartedRecordingTime;
 
-            public Memento(float startedRecordingTime, List<RecordingEntry> entries)
+            [DataMember] public List<RecordingEntryMemento> EntryMementos;
+
+            public Memento(float startedRecordingTime, List<RecordingEntryMemento> entries)
             {
                 StartedRecordingTime = startedRecordingTime;
-                Entries = entries;
-            }
-        }
-
-        public readonly struct RecordingEntry
-        {
-            public readonly float timestamp;
-            public readonly AbstractICommandMemento commandMemento;
-
-            public RecordingEntry(float timestamp, AbstractICommandMemento commandMemento)
-            {
-                this.timestamp = timestamp;
-                this.commandMemento = commandMemento;
+                EntryMementos = entries;
             }
         }
     }

@@ -1,32 +1,44 @@
 ﻿using CodingTest.Runtime.Provider;
-using CodingTest.Runtime.Serialization;
 using System;
 using System.Runtime.Serialization;
 
 namespace CodingTest.Runtime.CommandPattern
 {
-    public sealed class ShowTooltipCommand : ICommand, ISerializable<ShowTooltipCommand.Memento>
+    public sealed class ShowTooltipCommand : BaseCommand
     {
-        private readonly string tooltip;
-        public static event Action<string> OnShowTooltip;
+        public string Tooltip { get; private set; }
+        public float Delay { get; private set; }
 
-        public ShowTooltipCommand(string tooltip) => this.tooltip = tooltip;
+        public static event Action<string, float> OnShowTooltip;
 
-        public void Execute()
+        public ShowTooltipCommand(string tooltip, float delay)
         {
-            OnShowTooltip?.Invoke(tooltip);
-
-            ReplayProvider.Instance.AddEntry(Serialize());
+            Tooltip = tooltip;
+            Delay = delay;
         }
-        public Memento Serialize() => throw new System.NotImplementedException();
-        public void Deserialize(Memento memento) => throw new System.NotImplementedException();
 
-        [DataContract]
-        public class Memento : AbstractICommandMemento
+        public ShowTooltipCommand(ShowTooltipMemento memento) => Deserialize(memento);
+
+        public override void Execute()
         {
-            public Memento(ICommand command) : base(command)
-            {
-            }
+            OnShowTooltip?.Invoke(Tooltip, Delay);
+
+            ReplayProvider.Instance.Record(Serialize());
+        }
+
+        public override CommandMemento Serialize() => new ShowTooltipMemento(this);
+        public override void Deserialize(CommandMemento memento) => Tooltip = (memento as ShowTooltipMemento).TooltipText;
+    }
+
+    [DataContract]
+    public class ShowTooltipMemento : CommandMemento
+    {
+        [DataMember] public readonly string TooltipText;
+        [DataMember] public readonly float Delay;
+        public ShowTooltipMemento(ShowTooltipCommand command) : base(command)
+        {
+            TooltipText = command.Tooltip;
+            Delay = command.Delay;
         }
     }
 }

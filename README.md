@@ -9,7 +9,7 @@
 - extendibility
 
 > [!bug] Urgent!
-> - [ ] lookup the memento within mementos from Ruadh:WB
+> - [x] lookup the memento within mementos from Ruadh:WB
 > - [ ] continue with serialising the ICommands
 > - [ ] replay logic
 
@@ -38,7 +38,7 @@
 > - [x] Put the controls for this feature (Start/Stop Recording button, Recording name input field and Load and play recording button) at the top of the screen. 
 > - [ ] To specify which recording should be started or loaded the user has to type in the name of the recording in an input field. 
 > 	- [x] inputField OnSubmit -> 
-> 	- [ ] disable the startRecording button when no name is entered
+> 	- [x] disable the startRecording button when no name is entered
 > 		- [ ] tooltip that a name is required for the recording to start
 > - [x] After a recording has been started by clicking the start recording button, the start recording button should transform into a stop recording button. 
 > - [x] When the recording is stopped via the stop recording button, the recording gets saved.
