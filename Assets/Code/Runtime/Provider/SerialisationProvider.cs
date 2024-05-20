@@ -7,7 +7,6 @@ namespace CodingTest.Runtime.Provider
 {
     public sealed class SerialisationProvider : AbstractProvider<SerialisationProvider>
     {
-        #region SaveAndLoad
         internal void Save(string directory, string file, MemoryStream stream)
         {
             if (directory == null)
@@ -49,6 +48,5 @@ namespace CodingTest.Runtime.Provider
 
             return stream;
         }
-        #endregion
     }
 }

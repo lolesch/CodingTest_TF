@@ -12,11 +12,16 @@ namespace CodingTest.Runtime.UI.Toggles
 {
     public abstract class AbstractToggle : Selectable, IPointerClickHandler
     {
-        [SerializeField] protected string tooltipText = $"Set the tooltip text in the inspector";
+        [SerializeField] protected string tooltipForNotInteractable = $"Set the tooltip text in the inspector";
+        [SerializeField] protected string tooltipForOn = $"Set the tooltip text in the inspector";
+        [SerializeField] protected string tooltipForOff = $"Set the tooltip text in the inspector";
 
-        private ShowTooltipCommand showTooltipShortDelayCommand;
-        private ShowTooltipCommand showTooltipLongDelayCommand;
-        private HideTooltipCommand hideTooltipCommand;
+        private ShowTooltipCommand showTooltipNotInteractable;
+        private ShowTooltipCommand showTooltipForOnShortDelay;
+        private ShowTooltipCommand showTooltipForOnLongDelay;
+        private ShowTooltipCommand showTooltipForOffShortDelay;
+        private ShowTooltipCommand showTooltipForOffLongDelay;
+        private HideTooltipCommand hideTooltip;
 
         [field: SerializeField] public bool IsOn { get; private set; } = false;
 
@@ -30,8 +35,8 @@ namespace CodingTest.Runtime.UI.Toggles
 
         [SerializeField, ReadOnly] protected Image icon = null;
         public Image Icon => icon == null ? icon = GetComponentsInChildren<Image>()[1] : icon;
-        [SerializeField] private Sprite toggledOffSprite;
-        [SerializeField] private Sprite toggledOnSprite;
+        [SerializeField, PreviewIcon] private Sprite toggledOffSprite;
+        [SerializeField, PreviewIcon] private Sprite toggledOnSprite;
 
         public event Action<bool> OnToggle;
 
@@ -68,10 +73,12 @@ namespace CodingTest.Runtime.UI.Toggles
         protected override void Start()
         {
             base.Start();
-
-            showTooltipShortDelayCommand = new ShowTooltipCommand(tooltipText, Constants.TooltipDelay);
-            showTooltipLongDelayCommand = new ShowTooltipCommand(tooltipText, Constants.TooltipDelayAfterInteraction);
-            hideTooltipCommand = new HideTooltipCommand();
+            showTooltipNotInteractable = new ShowTooltipCommand(tooltipForNotInteractable, Constants.TooltipDelay);
+            showTooltipForOnShortDelay = new ShowTooltipCommand(tooltipForOn, Constants.TooltipDelay);
+            showTooltipForOnLongDelay = new ShowTooltipCommand(tooltipForOn, Constants.TooltipDelayAfterInteraction);
+            showTooltipForOffShortDelay = new ShowTooltipCommand(tooltipForOff, Constants.TooltipDelay);
+            showTooltipForOffLongDelay = new ShowTooltipCommand(tooltipForOff, Constants.TooltipDelayAfterInteraction);
+            hideTooltip = new HideTooltipCommand();
 
             SetToggle(IsOn);
         }
@@ -124,13 +131,28 @@ namespace CodingTest.Runtime.UI.Toggles
 
             if (eventData.button == PointerEventData.InputButton.Left)
                 SetToggle(!IsOn);
+
+            hideTooltip.Execute();
+
+            if (IsOn)
+                showTooltipForOnLongDelay.Execute();
+            else
+                showTooltipForOffLongDelay.Execute();
         }
         public override void OnPointerEnter(PointerEventData eventData)
         {
             base.OnPointerEnter(eventData);
 
             if (!interactable)
-                showTooltipShortDelayCommand.Execute();
+            {
+                showTooltipNotInteractable.Execute();
+                return;
+            }
+
+            if (IsOn)
+                showTooltipForOnShortDelay.Execute();
+            else
+                showTooltipForOffShortDelay.Execute();
         }
 
         public override void OnPointerExit(PointerEventData eventData)
@@ -140,7 +162,7 @@ namespace CodingTest.Runtime.UI.Toggles
             if (interactable)
                 DoStateTransition(IsOn ? SelectionState.Selected : SelectionState.Normal, false);
 
-            hideTooltipCommand.Execute();
+            hideTooltip.Execute();
         }
 
         public virtual void PlayToggleSound(bool isOn) { } // => AudioProvider.Instance.PlayButtonClick();

@@ -12,8 +12,6 @@ namespace CodingTest.Runtime.UI.Toggles
                 ReplayProvider.Instance.StopRecording();
         }
 
-        // TODO: tooltip for required fileName
-
         // TODO: make it event based instead of update
         private void FixedUpdate() => interactable = ReplayProvider.Instance.RecordingName != string.Empty
             && !ReplayProvider.Instance.IsReplaying;

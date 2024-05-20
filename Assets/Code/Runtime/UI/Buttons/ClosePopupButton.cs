@@ -6,7 +6,11 @@ namespace CodingTest.Runtime.UI.Buttons
     {
         private ClosePopupCommand closePopupCommand;
 
-        protected override void Start() => closePopupCommand = new ClosePopupCommand();
+        protected override void Start()
+        {
+            base.Start();
+            closePopupCommand = new ClosePopupCommand();
+        }
 
         protected override void OnLeftClick() => closePopupCommand.Execute();
         protected override void OnRightClick() { }

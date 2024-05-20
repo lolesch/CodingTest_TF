@@ -1,5 +1,4 @@
-﻿using CodingTest.Runtime.Provider;
-using System;
+﻿using System;
 using System.Runtime.Serialization;
 
 namespace CodingTest.Runtime.CommandPattern
@@ -19,19 +18,14 @@ namespace CodingTest.Runtime.CommandPattern
 
         public ShowTooltipCommand(ShowTooltipMemento memento) => Deserialize(memento);
 
-        public override void Execute()
-        {
-            OnShowTooltip?.Invoke(Tooltip, Delay);
-
-            ReplayProvider.Instance.Record(Serialize());
-        }
+        public override void Execute() => OnShowTooltip?.Invoke(Tooltip, Delay);//ReplayProvider.Instance.AddRecording(Serialize());
 
         public override CommandMemento Serialize() => new ShowTooltipMemento(this);
         public override void Deserialize(CommandMemento memento) => Tooltip = (memento as ShowTooltipMemento).TooltipText;
     }
 
     [DataContract]
-    public class ShowTooltipMemento : CommandMemento
+    public sealed class ShowTooltipMemento : CommandMemento
     {
         [DataMember] public readonly string TooltipText;
         [DataMember] public readonly float Delay;

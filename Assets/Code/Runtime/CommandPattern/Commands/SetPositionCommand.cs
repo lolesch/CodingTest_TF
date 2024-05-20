@@ -1,5 +1,6 @@
 ﻿using CodingTest.Runtime.Provider;
 using CodingTest.Runtime.UI.Buttons;
+using DG.Tweening;
 using System.Runtime.Serialization;
 using UnityEngine;
 
@@ -19,9 +20,9 @@ namespace CodingTest.Runtime.CommandPattern
 
         public override void Execute()
         {
-            Receiver.transform.position = Position;
+            _ = Receiver.transform.DOMove(Position, Time.deltaTime).SetEase(Ease.InOutSine);
 
-            ReplayProvider.Instance.Record(Serialize());
+            ReplayProvider.Instance.AddRecording(Serialize());
         }
 
         public override CommandMemento Serialize() => new SetPositionMemento(this);
@@ -29,13 +30,13 @@ namespace CodingTest.Runtime.CommandPattern
         public override void Deserialize(CommandMemento memento)
         {
             var m = memento as SetPositionMemento;
-            Receiver = Receiver = ReplayProvider.Instance.RecordableButtons[m.ButtonIndex];
+            Receiver = Receiver = ReplayProvider.Instance.GetButton(m.ButtonIndex);
             Position = m.Position;
         }
     }
 
     [DataContract]
-    public class SetPositionMemento : CommandMemento
+    public sealed class SetPositionMemento : CommandMemento
     {
         [DataMember] public readonly int ButtonIndex = -1;
         [DataMember] public readonly Vector2 Position;

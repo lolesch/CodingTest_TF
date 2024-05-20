@@ -6,27 +6,28 @@ namespace CodingTest.Runtime.CommandPattern
 {
     public sealed class OpenPopupCommand : BaseCommand
     {
-        public string popupText { get; private set; }
+        public string PopupText { get; private set; }
+
         public static event Action<string> OnShowPopup;
 
-        public OpenPopupCommand(string popupText) => this.popupText = popupText;
+        public OpenPopupCommand(string popupText) => PopupText = popupText;
         public OpenPopupCommand(OpenPopupMemento memento) => Deserialize(memento);
 
         public override void Execute()
         {
-            OnShowPopup?.Invoke(popupText);
+            OnShowPopup?.Invoke(PopupText);
 
-            ReplayProvider.Instance.Record(Serialize());
+            ReplayProvider.Instance.AddRecording(Serialize());
         }
 
-        public override CommandMemento Serialize() => new OpenPopupMemento(new OpenPopupCommand(popupText));
-        public override void Deserialize(CommandMemento memento) => popupText = (memento as OpenPopupMemento).PopupText;
+        public override CommandMemento Serialize() => new OpenPopupMemento(new OpenPopupCommand(PopupText));
+        public override void Deserialize(CommandMemento memento) => PopupText = (memento as OpenPopupMemento).PopupText;
     }
 
     [DataContract]
-    public class OpenPopupMemento : CommandMemento
+    public sealed class OpenPopupMemento : CommandMemento
     {
         [DataMember] public readonly string PopupText;
-        public OpenPopupMemento(OpenPopupCommand command) : base(command) => PopupText = command.popupText;
+        public OpenPopupMemento(OpenPopupCommand command) : base(command) => PopupText = command.PopupText;
     }
 }

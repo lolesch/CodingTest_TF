@@ -6,6 +6,7 @@ namespace CodingTest.Runtime.UI.Panels
     public sealed class Popup : AbstractPanel
     {
         private TextMeshProUGUI popupText;
+
         protected override void OnDisable()
         {
             base.OnDisable();
@@ -13,7 +14,6 @@ namespace CodingTest.Runtime.UI.Panels
             OpenPopupCommand.OnShowPopup -= OpenPopup;
             ClosePopupCommand.OnHidePopup -= ClosePopup;
         }
-
         private void OnEnable()
         {
             OpenPopupCommand.OnShowPopup -= OpenPopup;

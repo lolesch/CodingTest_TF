@@ -6,8 +6,8 @@ namespace CodingTest.Data.ReplaySystem
 {
     public sealed class RecordingEntry : ISerializable<RecordingEntryMemento>
     {
-        public float Timestamp;
-        public CommandMemento CommandMemento;
+        private float Timestamp;
+        private readonly CommandMemento CommandMemento;
 
         public RecordingEntry(RecordingEntryMemento memento) => Deserialize(memento);
 
@@ -19,7 +19,7 @@ namespace CodingTest.Data.ReplaySystem
 
         public RecordingEntryMemento Serialize() => new(Timestamp, CommandMemento);
 
-        public void Deserialize(RecordingEntryMemento memento) => Timestamp = memento.Timestamp;//_ = memento.CommandMemento?.CommandType switch//{//    ApplyColorCommand => new ApplyColorCommand(memento.CommandMemento),//};//    .Deserialize(memento.CommandMemento);
+        public void Deserialize(RecordingEntryMemento memento) => Timestamp = memento.Timestamp;
     }
 
     [DataContract]

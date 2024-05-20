@@ -9,12 +9,11 @@ namespace CodingTest.Runtime.UI.Panels
     public sealed class Tooltip : AbstractPanel
     {
         private Coroutine showTooltip;
-
         private TextMeshProUGUI tooltip;
         private bool showLeft;
 
-        [SerializeField, Range(0, 100)] private float horOffset = 10;
-        private float OffsetX => showLeft ? +horOffset : -horOffset;
+        [SerializeField, Range(0, 100)] private float xOffsetToCursor = 10;
+        private float OffsetX => showLeft ? +xOffsetToCursor : -xOffsetToCursor;
 
         protected override void OnDisable()
         {

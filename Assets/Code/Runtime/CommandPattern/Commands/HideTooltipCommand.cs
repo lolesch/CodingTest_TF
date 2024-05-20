@@ -15,7 +15,7 @@ namespace CodingTest.Runtime.CommandPattern
         {
             OnHideTooltip?.Invoke();
 
-            ReplayProvider.Instance.Record(Serialize());
+            ReplayProvider.Instance.AddRecording(Serialize());
         }
 
         public override CommandMemento Serialize() => new HideTooltipMemento(this);
@@ -23,7 +23,7 @@ namespace CodingTest.Runtime.CommandPattern
     }
 
     [DataContract]
-    public class HideTooltipMemento : CommandMemento
+    public sealed class HideTooltipMemento : CommandMemento
     {
         public HideTooltipMemento(BaseCommand command) : base(command) { }
     }

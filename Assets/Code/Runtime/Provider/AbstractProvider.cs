@@ -44,6 +44,7 @@ namespace CodingTest.Runtime.Provider
             }
 
             instance = null;
+
             return false;
         }
 
@@ -57,7 +58,8 @@ namespace CodingTest.Runtime.Provider
                 Debug.LogWarning($"Created new {instance.name.ColoredComponent()}", gameObject);
             }
 
-            DontDestroyOnLoad(instance.gameObject);
+            if (Application.isPlaying)
+                DontDestroyOnLoad(instance.gameObject);
 
             return instance;
         }

@@ -15,7 +15,7 @@ namespace CodingTest.Runtime.CommandPattern
         {
             OnHidePopup?.Invoke();
 
-            ReplayProvider.Instance.Record(Serialize());
+            ReplayProvider.Instance.AddRecording(Serialize());
         }
 
         public override CommandMemento Serialize() => new ClosePopupMemento(this);
@@ -23,7 +23,7 @@ namespace CodingTest.Runtime.CommandPattern
     }
 
     [DataContract]
-    public class ClosePopupMemento : CommandMemento
+    public sealed class ClosePopupMemento : CommandMemento
     {
         public ClosePopupMemento(ClosePopupCommand command) : base(command) { }
     }

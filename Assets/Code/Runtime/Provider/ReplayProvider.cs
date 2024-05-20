@@ -1,28 +1,25 @@
 ﻿using CodingTest.Data.ReplaySystem;
 using CodingTest.Runtime.CommandPattern;
 using CodingTest.Runtime.UI.Buttons;
-using CodingTest.Utility.AttributeRefs;
 using System;
 using System.Collections;
 using UnityEngine;
 
 namespace CodingTest.Runtime.Provider
 {
-    internal sealed class ReplayProvider : AbstractProvider<ReplayProvider>
+    public sealed class ReplayProvider : AbstractProvider<ReplayProvider>
     {
         private Recording recording;
+        private RecordableButton[] recordableButtons = new RecordableButton[3];
 
-        [SerializeField, ReadOnly] public RecordableButton[] RecordableButtons = new RecordableButton[3];
+        public string RecordingName { get; private set; } = string.Empty;
+        public bool IsRecording { get; private set; }
+        public bool IsReplaying { get; private set; }
 
-        internal string RecordingName = string.Empty;
+        private void Start() => recordableButtons = FindObjectsByType<RecordableButton>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
+        public void SetRecordingName(string name) => RecordingName = name;
 
-        internal bool IsRecording { get; private set; }
-        internal bool IsReplaying { get; private set; }
-
-        private void Start() => RecordableButtons = FindObjectsByType<RecordableButton>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
-        internal void SetRecordingName(string name) => RecordingName = name;
-
-        internal void StartRecording()
+        public void StartRecording()
         {
             if (RecordingName == string.Empty)
             {
@@ -30,18 +27,22 @@ namespace CodingTest.Runtime.Provider
                 return;
             }
 
-            recording = new();
+            if (recording == null)
+                recording = new();
+            else
+                recording.Reset();
+
             IsRecording = true;
 
-            foreach (var button in RecordableButtons)
+            foreach (var button in recordableButtons)
             {
-                // might want to call the commands on that button
-                new SetPositionCommand(button, button.transform.position).Execute();
-                new ApplyColorCommand(button).Execute();
+                // recording initial values
+                AddRecording(new SetPositionCommand(button, button.transform.position).Serialize());
+                AddRecording(new ApplyColorCommand(button).Serialize());
             }
         }
 
-        internal void Record(CommandMemento commandMemento)
+        public void AddRecording(CommandMemento commandMemento)
         {
             if (recording == null || !IsRecording)
                 return;
@@ -49,66 +50,68 @@ namespace CodingTest.Runtime.Provider
             recording.AddEntry(commandMemento);
         }
 
-        internal void StopRecording()
+        public void StopRecording()
         {
-            //if (recording == null || !IsRecording)
-            //    return;
-
-            //Record(null);
-
             recording?.Save(RecordingName);
             IsRecording = false;
         }
 
-        internal void StartReplaying()
+        public void StartReplaying()
         {
             recording = Recording.Load(RecordingName);
-            IsReplaying = true;
 
             _ = StartCoroutine(Replay(recording));
         }
 
-        internal void StopReplaying() => IsReplaying = false;
+        public void StopReplaying() => IsReplaying = false;
 
         private IEnumerator Replay(Recording recording)
         {
-            var entries = recording.RecordedCommands;
+            IsReplaying = true;
 
+            var entries = recording.RecordedCommands;
             var startedPlayingTime = Time.time;
 
             var i = 0;
 
-            while (i < entries.Count)
+            while (i < entries.Count && IsReplaying)
             {
                 var timePassed = Time.time - startedPlayingTime;
 
-                if (entries[i].Timestamp <= timePassed)
+                while (i < entries.Count && entries[i].Timestamp <= timePassed)
                 {
-                    if (entries[i].CommandMemento != null)
+                    if (entries[i].CommandMemento == null)
                     {
-                        // create a new command based on the corresponding name and execute it
-                        BaseCommand command = entries[i].CommandMemento.CommandName switch
-                        {
-                            // TODO: extend this!
-                            nameof(ApplyColorCommand) => new ApplyColorCommand(entries[i].CommandMemento as ApplyColorMemento),
-                            nameof(ClosePopupCommand) => new ClosePopupCommand(entries[i].CommandMemento as ClosePopupMemento),
-                            nameof(CycleColorCommand) => new CycleColorCommand(entries[i].CommandMemento as CycleColorMemento),
-                            nameof(HideTooltipCommand) => new HideTooltipCommand(entries[i].CommandMemento as HideTooltipMemento),
-                            nameof(OpenPopupCommand) => new OpenPopupCommand(entries[i].CommandMemento as OpenPopupMemento),
-                            nameof(SetPositionCommand) => new SetPositionCommand(entries[i].CommandMemento as SetPositionMemento),
-                            nameof(ShowTooltipCommand) => new ShowTooltipCommand(entries[i].CommandMemento as ShowTooltipMemento),
-
-                            _ => null
-                        };
-                        command?.Execute();
+                        i++;
+                        continue;
                     }
+
+                    var command = CreateCommandFromMemento(entries[i].CommandMemento);
+                    command?.Execute();
+
                     i++;
                 }
 
                 yield return new WaitForFixedUpdate();
             }
+
+            StopReplaying();
         }
 
-        internal int GetButtonIndex(RecordableButton receiver) => Array.IndexOf(RecordableButtons, receiver);
+        private BaseCommand CreateCommandFromMemento(CommandMemento memento) => memento.CommandName switch
+        {
+            nameof(ApplyColorCommand) => new ApplyColorCommand(memento as ApplyColorMemento),
+            nameof(ClosePopupCommand) => new ClosePopupCommand(memento as ClosePopupMemento),
+            nameof(CycleColorCommand) => new CycleColorCommand(memento as CycleColorMemento),
+            nameof(HideTooltipCommand) => new HideTooltipCommand(memento as HideTooltipMemento),
+            nameof(OpenPopupCommand) => new OpenPopupCommand(memento as OpenPopupMemento),
+            nameof(SetPositionCommand) => new SetPositionCommand(memento as SetPositionMemento),
+            nameof(ShowTooltipCommand) => new ShowTooltipCommand(memento as ShowTooltipMemento),
+
+            _ => null
+        };
+
+        public int GetButtonIndex(RecordableButton receiver) => Array.IndexOf(recordableButtons, receiver);
+        public RecordableButton GetButton(int index) => recordableButtons[index];
     }
 }

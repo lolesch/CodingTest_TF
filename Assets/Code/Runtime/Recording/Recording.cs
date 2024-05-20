@@ -11,24 +11,14 @@ namespace CodingTest.Data.ReplaySystem
 {
     public sealed class Recording : ISerializable<Recording.Memento>
     {
-        [field: SerializeField] private static float startedRecordingTime = 0;
+        private float startedRecordingTime;
+        public List<RecordingEntryMemento> RecordedCommands { get; private set; } = new();
 
-        public List<RecordingEntryMemento> RecordedCommands;
+        public Recording() => Reset();
 
-        public Recording()
-        {
-            startedRecordingTime = Time.time;
-            RecordedCommands = new List<RecordingEntryMemento>();
-        }
+        private Recording(Memento memento) => Deserialize(memento);
 
-        public Recording(Memento memento) => Deserialize(memento);
-
-        public void AddEntry(CommandMemento commandMemento)
-        {
-            RecordedCommands ??= new List<RecordingEntryMemento>();
-
-            RecordedCommands.Add(new(Time.time - startedRecordingTime, commandMemento));
-        }
+        public void AddEntry(CommandMemento commandMemento) => RecordedCommands.Add(new(Time.time - startedRecordingTime, commandMemento));
 
         public void Save(string fileName)
         {
@@ -73,8 +63,15 @@ namespace CodingTest.Data.ReplaySystem
         public void Deserialize(Memento memento)
         {
             startedRecordingTime = memento.StartedRecordingTime;
-
             RecordedCommands = memento.EntryMementos;
+        }
+
+        public void Reset()
+        {
+            startedRecordingTime = Time.time;
+
+            RecordedCommands ??= new List<RecordingEntryMemento>();
+            RecordedCommands.Clear();
         }
 
         [DataContract]
