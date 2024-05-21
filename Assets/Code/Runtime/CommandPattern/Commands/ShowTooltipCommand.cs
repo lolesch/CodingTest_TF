@@ -1,5 +1,7 @@
-﻿using System;
+﻿using CodingTest.Runtime.Provider;
+using System;
 using System.Runtime.Serialization;
+using UnityEngine;
 
 namespace CodingTest.Runtime.CommandPattern
 {
@@ -7,8 +9,9 @@ namespace CodingTest.Runtime.CommandPattern
     {
         public string Tooltip { get; private set; }
         public float Delay { get; private set; }
+        public Vector2 Position { get; private set; }
 
-        public static event Action<string, float> OnShowTooltip;
+        public static event Action<string, Vector2> OnShowTooltip;
 
         public ShowTooltipCommand(string tooltip, float delay)
         {
@@ -18,10 +21,24 @@ namespace CodingTest.Runtime.CommandPattern
 
         public ShowTooltipCommand(ShowTooltipMemento memento) => Deserialize(memento);
 
-        public override void Execute() => OnShowTooltip?.Invoke(Tooltip, Delay);//ReplayProvider.Instance.AddRecording(Serialize());
+        public override void Execute()
+        {
+            if (!ReplayProvider.Instance.IsReplaying)
+                Position = Input.mousePosition;
+
+            OnShowTooltip?.Invoke(Tooltip, Position);
+
+            ReplayProvider.Instance.AddRecording(Serialize());
+        }
 
         public override CommandMemento Serialize() => new ShowTooltipMemento(this);
-        public override void Deserialize(CommandMemento memento) => Tooltip = (memento as ShowTooltipMemento).TooltipText;
+        public override void Deserialize(CommandMemento memento)
+        {
+            var m = memento as ShowTooltipMemento;
+            Tooltip = m.TooltipText;
+            Delay = m.Delay;
+            Position = m.Position;
+        }
     }
 
     [DataContract]
@@ -29,10 +46,12 @@ namespace CodingTest.Runtime.CommandPattern
     {
         [DataMember] public readonly string TooltipText;
         [DataMember] public readonly float Delay;
+        [DataMember] public readonly Vector2 Position;
         public ShowTooltipMemento(ShowTooltipCommand command) : base(command)
         {
             TooltipText = command.Tooltip;
             Delay = command.Delay;
+            Position = command.Position;
         }
     }
 }

@@ -1,6 +1,6 @@
 using CodingTest.Runtime.CommandPattern;
+using CodingTest.Runtime.Provider;
 using CodingTest.Utility.Extensions;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -8,7 +8,6 @@ namespace CodingTest.Runtime.UI.Panels
 {
     public sealed class Tooltip : AbstractPanel
     {
-        private Coroutine showTooltip;
         private TextMeshProUGUI tooltip;
         private bool showLeft;
 
@@ -19,14 +18,14 @@ namespace CodingTest.Runtime.UI.Panels
         {
             base.OnDisable();
 
-            ShowTooltipCommand.OnShowTooltip -= SetCoroutine;
+            ShowTooltipCommand.OnShowTooltip -= ShowTooltip;
             HideTooltipCommand.OnHideTooltip -= HideTooltip;
         }
 
         private void OnEnable()
         {
-            ShowTooltipCommand.OnShowTooltip -= SetCoroutine;
-            ShowTooltipCommand.OnShowTooltip += SetCoroutine;
+            ShowTooltipCommand.OnShowTooltip -= ShowTooltip;
+            ShowTooltipCommand.OnShowTooltip += ShowTooltip;
 
             HideTooltipCommand.OnHideTooltip -= HideTooltip;
             HideTooltipCommand.OnHideTooltip += HideTooltip;
@@ -36,42 +35,38 @@ namespace CodingTest.Runtime.UI.Panels
 
         private void LateUpdate()
         {
-            if (IsActive)
-                SetPosition();
+            // do not move the tooltip during replaying
+            if (IsActive && !ReplayProvider.Instance.IsReplaying)
+                SetPosition(Input.mousePosition);
         }
 
-        private void HideTooltip()
+        private void HideTooltip() => FadeOut();
+
+        private void ShowTooltip(string text, Vector2 position)
         {
-            if (showTooltip != null)
-                StopCoroutine(showTooltip);
-
-            FadeOut();
-        }
-
-        private void SetCoroutine(string text, float delay) => showTooltip = StartCoroutine(ShowTooltip(delay, text));
-
-        private IEnumerator ShowTooltip(float delay, string text)
-        {
-            yield return new WaitForSeconds(delay);
-
             tooltip.text = text;
 
-            showLeft = Input.mousePosition.x < (Screen.width * 0.5);
-
-            SetPosition();
+            SetPivot(position);
+            SetPosition(position);
 
             FadeIn();
         }
 
-        private void SetPosition()
+        private void SetPosition(Vector2 position)
         {
+            var mousePos = position / RectTransform.lossyScale;
+            RectTransform.anchoredPosition = new Vector2(mousePos.x + OffsetX, mousePos.y);
+        }
+
+        private void SetPivot(Vector2 position)
+        {
+            showLeft = position.x < (Screen.width * 0.5);
+
             /// pivot pointing towards center of screen
             var pivotX = showLeft ? 0 : 1;
-            var pivotY = Input.mousePosition.y.MapTo01(0, Screen.height);
-            RectTransform.pivot = new(pivotX, pivotY);
+            var pivotY = position.y.MapTo01(0, Screen.height);
 
-            var mousePos = (Vector2)Input.mousePosition / RectTransform.lossyScale;
-            RectTransform.anchoredPosition = new Vector2(mousePos.x + OffsetX, mousePos.y);
+            RectTransform.pivot = new(pivotX, pivotY);
         }
     }
 }

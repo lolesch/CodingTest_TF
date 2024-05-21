@@ -1,5 +1,6 @@
 ﻿using CodingTest.Data;
 using CodingTest.Runtime.CommandPattern;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,22 +11,36 @@ namespace CodingTest.Runtime.UI.Buttons
     {
         // TODO: disable the button for x seconds to prevent spam clicking
 
-        protected ShowTooltipCommand showTooltipShortDelayCommand;
-        protected ShowTooltipCommand showTooltipLongDelayCommand;
-        protected HideTooltipCommand hideTooltipCommand;
+        private HideTooltipCommand hideTooltipCommand;
 
         [SerializeField] private string tooltipText = $"Set the tooltip text in the inspector";
+        private Coroutine showTooltip;
 
         protected override void Start()
         {
             base.Start();
-            showTooltipShortDelayCommand = new ShowTooltipCommand(tooltipText, Constants.TooltipDelay);
-            showTooltipLongDelayCommand = new ShowTooltipCommand(tooltipText, Constants.TooltipDelayAfterInteraction);
             hideTooltipCommand = new HideTooltipCommand();
         }
 
         protected abstract void OnLeftClick();
         protected abstract void OnRightClick();
+
+        protected void HideTooltip()
+        {
+            if (showTooltip != null)
+                StopCoroutine(showTooltip);
+
+            hideTooltipCommand.Execute();
+        }
+
+        protected void ShowTooltip(float delay) => showTooltip = StartCoroutine(DelayedShowTooltip(delay));
+
+        private IEnumerator DelayedShowTooltip(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            new ShowTooltipCommand(tooltipText, delay).Execute();
+        }
 
         public virtual void OnPointerClick(PointerEventData eventData)
         {
@@ -37,19 +52,20 @@ namespace CodingTest.Runtime.UI.Buttons
             else if (eventData.button == PointerEventData.InputButton.Right)
                 OnRightClick();
 
-            hideTooltipCommand.Execute();
-            showTooltipLongDelayCommand.Execute();
+            HideTooltip();
+
+            ShowTooltip(Constants.TooltipDelayAfterInteraction);
         }
         public override void OnPointerEnter(PointerEventData eventData)
         {
             base.OnPointerEnter(eventData);
 
-            showTooltipShortDelayCommand.Execute();
+            ShowTooltip(Constants.TooltipDelay);
         }
         public override void OnPointerExit(PointerEventData eventData)
         {
             base.OnPointerExit(eventData);
-            hideTooltipCommand.Execute();
+            HideTooltip();
         }
     }
 }

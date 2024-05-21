@@ -1,4 +1,5 @@
-﻿using CodingTest.Data.Enums;
+﻿using CodingTest.Data;
+using CodingTest.Data.Enums;
 using CodingTest.Runtime.CommandPattern;
 using CodingTest.Runtime.Provider;
 using UnityEngine;
@@ -36,8 +37,8 @@ namespace CodingTest.Runtime.UI.Buttons
             applyColorCommand.Execute();
         }
 
-        public void OnBeginDrag(PointerEventData eventData) => hideTooltipCommand.Execute();
-        public void OnEndDrag(PointerEventData eventData) => showTooltipLongDelayCommand.Execute();
+        public void OnBeginDrag(PointerEventData eventData) => HideTooltip();
+        public void OnEndDrag(PointerEventData eventData) => ShowTooltip(Constants.TooltipDelayAfterInteraction);
         public void OnDrag(PointerEventData eventData) => ReplayProvider.Instance.AddRecording(new SetPositionCommand(this, transform.position).Serialize());
     }
 }

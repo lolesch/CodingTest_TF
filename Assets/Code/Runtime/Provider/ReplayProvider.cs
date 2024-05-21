@@ -52,6 +52,8 @@ namespace CodingTest.Runtime.Provider
 
         public void StopRecording()
         {
+            AddRecording(new HideTooltipCommand().Serialize());
+
             recording?.Save(RecordingName);
             IsRecording = false;
         }

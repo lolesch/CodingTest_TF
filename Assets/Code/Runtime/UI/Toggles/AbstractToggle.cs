@@ -3,6 +3,7 @@ using CodingTest.Runtime.CommandPattern;
 using CodingTest.Utility.AttributeRefs;
 using DG.Tweening;
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,12 +17,9 @@ namespace CodingTest.Runtime.UI.Toggles
         [SerializeField] protected string tooltipForOn = $"Set the tooltip text in the inspector";
         [SerializeField] protected string tooltipForOff = $"Set the tooltip text in the inspector";
 
-        private ShowTooltipCommand showTooltipNotInteractable;
-        private ShowTooltipCommand showTooltipForOnShortDelay;
-        private ShowTooltipCommand showTooltipForOnLongDelay;
-        private ShowTooltipCommand showTooltipForOffShortDelay;
-        private ShowTooltipCommand showTooltipForOffLongDelay;
         private HideTooltipCommand hideTooltip;
+
+        private Coroutine showTooltip;
 
         [field: SerializeField] public bool IsOn { get; private set; } = false;
 
@@ -73,11 +71,6 @@ namespace CodingTest.Runtime.UI.Toggles
         protected override void Start()
         {
             base.Start();
-            showTooltipNotInteractable = new ShowTooltipCommand(tooltipForNotInteractable, Constants.TooltipDelay);
-            showTooltipForOnShortDelay = new ShowTooltipCommand(tooltipForOn, Constants.TooltipDelay);
-            showTooltipForOnLongDelay = new ShowTooltipCommand(tooltipForOn, Constants.TooltipDelayAfterInteraction);
-            showTooltipForOffShortDelay = new ShowTooltipCommand(tooltipForOff, Constants.TooltipDelay);
-            showTooltipForOffLongDelay = new ShowTooltipCommand(tooltipForOff, Constants.TooltipDelayAfterInteraction);
             hideTooltip = new HideTooltipCommand();
 
             SetToggle(IsOn);
@@ -121,6 +114,23 @@ namespace CodingTest.Runtime.UI.Toggles
 
         protected abstract void Toggle(bool isOn);
 
+        private void HideTooltip()
+        {
+            if (showTooltip != null)
+                StopCoroutine(showTooltip);
+
+            hideTooltip.Execute();
+        }
+
+        private void ShowTooltip(float delay, string text) => showTooltip = StartCoroutine(DelayedShowTooltip(delay, text));
+
+        private IEnumerator DelayedShowTooltip(float delay, string text)
+        {
+            yield return new WaitForSeconds(delay);
+
+            new ShowTooltipCommand(text, delay).Execute();
+        }
+
         public virtual void OnPointerClick(PointerEventData eventData)
         {
             if (!interactable)
@@ -132,12 +142,12 @@ namespace CodingTest.Runtime.UI.Toggles
             if (eventData.button == PointerEventData.InputButton.Left)
                 SetToggle(!IsOn);
 
-            hideTooltip.Execute();
+            HideTooltip();
 
             if (IsOn)
-                showTooltipForOnLongDelay.Execute();
+                ShowTooltip(Constants.TooltipDelayAfterInteraction, tooltipForOn);
             else
-                showTooltipForOffLongDelay.Execute();
+                ShowTooltip(Constants.TooltipDelayAfterInteraction, tooltipForOff);
         }
         public override void OnPointerEnter(PointerEventData eventData)
         {
@@ -145,14 +155,14 @@ namespace CodingTest.Runtime.UI.Toggles
 
             if (!interactable)
             {
-                showTooltipNotInteractable.Execute();
+                ShowTooltip(Constants.TooltipDelay, tooltipForNotInteractable);
                 return;
             }
 
             if (IsOn)
-                showTooltipForOnShortDelay.Execute();
+                ShowTooltip(Constants.TooltipDelay, tooltipForOn);
             else
-                showTooltipForOffShortDelay.Execute();
+                ShowTooltip(Constants.TooltipDelay, tooltipForOff);
         }
 
         public override void OnPointerExit(PointerEventData eventData)
@@ -162,7 +172,7 @@ namespace CodingTest.Runtime.UI.Toggles
             if (interactable)
                 DoStateTransition(IsOn ? SelectionState.Selected : SelectionState.Normal, false);
 
-            hideTooltip.Execute();
+            HideTooltip();
         }
 
         public virtual void PlayToggleSound(bool isOn) { } // => AudioProvider.Instance.PlayButtonClick();
